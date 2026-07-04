@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.5D 封装截面 · 手绘</title>
+<style>
+  body { margin: 0; background: #f5f0e8; display: flex; justify-content: center; min-height: 100vh; }
+  .container { max-width: 720px; width: 100%; padding: 16px; }
+  h1 { text-align: center; font-size: 22px; color: #2c2c2c; margin: 0 0 2px; font-family: 'PingFang SC','Microsoft YaHei',sans-serif; letter-spacing: 2px; }
+  .sub { text-align: center; font-size: 11px; color: #8b7b6f; margin-bottom: 10px; font-family: 'PingFang SC','Microsoft YaHei',sans-serif; }
+  canvas { width: 100%; display: block; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>2.5D 封装结构示意图</h1>
+  <p class="sub">半导体封装 · 手绘截面</p>
+  <canvas id="c"></canvas>
+</div>
+<script>
+(function(){
+  const c = document.getElementById('c');
+  const W=680, H=580, dpr=window.devicePixelRatio||1;
+  c.width=W*dpr; c.height=H*dpr;
+  c.style.width=W+'px'; c.style.height=H+'px';
+  const ctx=c.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.fillStyle='#f5f0e8'; ctx.fillRect(0,0,W,H);
+
+  function R(n){return(Math.random()-0.5)*n}
+
+  // ── Draw a single sketchy stroke ──
+  function stroke(points,opt){
+    ctx.strokeStyle=opt.c||'#333'; ctx.lineWidth=opt.w||1.5;
+    ctx.beginPath();
+    const n=points.length-1;
+    for(let i=0;i<=n;i++){
+      const t=i/n, p=points[i];
+      if(i===0) ctx.moveTo(p[0],p[1]);
+      else {
+        const wobble=(i>0&&i<n)?R(opt.r||1.5):0;
+        ctx.lineTo(p[0]+wobble,p[1]+wobble);
+      }
+    }
+    ctx.stroke();
+  }
+
+  // ── Sketchy line with dual stroke ──
+  function sketchLine(x1,y1,x2,y2,opt){
+    const pts=[[x1,y1],[x2,y2]];
+    stroke(pts,{...opt,r:(opt.r||1.5)*1.2});
+    // Second stroke offset slightly
+    if(opt.double!==false){
+      const ox=R(1.5), oy=R(1.5);
+      stroke([[x1+ox,y1+oy],[x2+ox,y2+oy]],{...opt,w:(opt.w||1)*0.7,c:'rgba(50,50,50,0.3)',r:(opt.r||1.5)*1.5});
+    }
+  }
+
+  // ── Sketchy rectangle ──
+  function sketchRect(x,y,w,h,opt){
+    const r=opt.r||2;
+    // Shadow
+    sketchLine(x+3,y+3,x+w+3,y+3,{c:'rgba(0,0,0,0.05)',w:1,r:1,double:false});
+    sketchLine(x+w+3,y+3,x+w+3,y+h+3,{c:'rgba(0,0,0,0.05)',w:1,r:1,double:false});
+    sketchLine(x+w+3,y+h+3,x+3,y+h+3,{c:'rgba(0,0,0,0.05)',w:1,r:1,double:false});
+    sketchLine(x+3,y+h+3,x+3,y+3,{c:'rgba(0,0,0,0.05)',w:1,r:1,double:false});
+    // Main
+    sketchLine(x,y,x+w,y,opt);
+    sketchLine(x+w,y,x+w,y+h,opt);
+    sketchLine(x+w,y+h,x,y+h,opt);
+    sketchLine(x,y+h,x,y,opt);
+    // Fill: cross-hatch
+    if(opt.fill){
+      ctx.fillStyle=opt.fill;
+      ctx.fillRect(x+3,y+3,w-6,h-6);
+      ctx.strokeStyle='rgba(0,0,0,0.06)'; ctx.lineWidth=0.6;
+      // Hatch lines
+      for(let i=1;i<w-8;i+=10){
+        ctx.beginPath();
+        ctx.moveTo(x+4+i+R(3),y+4+R(3));
+        ctx.lineTo(x+4+i+R(3),y+h-4+R(3));
+        ctx.stroke();
+      }
+      for(let i=1;i<h-8;i+=10){
+        ctx.beginPath();
+        ctx.moveTo(x+4+R(3),y+4+i+R(3));
+        ctx.lineTo(x+w-4+R(3),y+4+i+R(3));
+        ctx.stroke();
+      }
+    }
+  }
+
+  // ── Sketchy circle ──
+  function sketchCircle(cx,cy,r2,opt){
+    const n=20+Math.random()*4;
+    // Main
+    ctx.strokeStyle=opt.c||'#333'; ctx.lineWidth=opt.w||1.5; ctx.beginPath();
+    for(let i=0;i<=n;i++){const a=Math.PI*2*i/n,rr=r2+R(opt.r||2);
+      i===0?ctx.moveTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr):ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);}
+    ctx.closePath(); ctx.stroke();
+    // Second stroke
+    if(opt.double!==false){
+      ctx.strokeStyle='rgba(50,50,50,0.25)'; ctx.lineWidth=(opt.w||1)*0.6; ctx.beginPath();
+      for(let i=0;i<=n;i++){const a=Math.PI*2*i/n,rr=r2+R(opt.r||2.5);
+        i===0?ctx.moveTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr):ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);}
+      ctx.closePath(); ctx.stroke();
+    }
+    if(opt.fill){
+      ctx.fillStyle=opt.fill; ctx.beginPath();
+      for(let i=0;i<=n;i++){const a=Math.PI*2*i/n,rr=r2-1+R(1.5);
+        i===0?ctx.moveTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr):ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);}
+      ctx.closePath(); ctx.fill();
+    }
+  }
+
+  // ── Text ──
+  function txt(s,x,y,o){
+    ctx.fillStyle=o.c||'#222';
+    ctx.font=(o.b?'bold ':'')+(o.sz||12)+'px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.textAlign=o.al||'center';
+    ctx.textBaseline=o.bl||'middle';
+    ctx.fillText(s,x+R(0.5),y+R(0.5));
+  }
+
+  // ── Label with leader ──
+  function label(text,fx,fy,tx,ty,o){
+    sketchLine(fx,fy,tx,ty,{c:'#555',w:1.2,r:0.8,double:true});
+    ctx.fillStyle='#555'; ctx.beginPath(); ctx.arc(fx,fy,2,0,Math.PI*2); ctx.fill();
+    const lines=text.split('\n');
+    lines.forEach((l,i)=> txt(l,tx,ty-5+i*13,{c:'#333',sz:11,al:o&&o.al||'left'}));
+  }
+
+  // ══════════════════════════════════════
+  //  LAYOUT — no overlaps guaranteed
+  // ══════════════════════════════════════
+
+  // Chiplet row
+  const chipY=35, chipH=48;
+  const cx=W/2;
+  const logic={x:cx-5, y:chipY, w:120, h:chipH};                     // center
+  const hbm={x:logic.x+logic.w+12, y:chipY, w:115, h:chipH};          // right
+  const chiplet={x:logic.x-82, y:chipY, w:70, h:chipH};               // left
+
+  // Micro bumps
+  const bumpY=chipY+chipH+5, bumpH=12;
+
+  // Interposer
+  const ipY=bumpY+bumpH+8, ipH=80;
+  const ipW=370, ipX=cx-ipW/2;
+
+  // C4 bumps
+  const c4Y=ipY+ipH+6, c4H=14;
+
+  // Substrate
+  const subY=c4Y+c4H+8, subH=75;
+  const subW=ipW+50, subX=cx-subW/2;
+
+  // BGA
+  const bgaY=subY+subH+6;
+
+  // ── 1. Chiplets ──
+  [
+    [chiplet.x,chiplet.y,chiplet.w,chiplet.h,'Chiplet','#d0c0b0'],
+    [logic.x,logic.y,logic.w,logic.h,'Logic','#d4c8b8'],
+    [hbm.x,hbm.y,hbm.w,hbm.h,'HBM','#c8b8a8']
+  ].forEach(([x,y,w,h,la,co])=>{
+    sketchRect(x,y,w,h,{c:'#4a3a2e',w:1.6,fill:co,r:2.5});
+    txt(la,x+w/2,y+h/2,{c:'#222',sz:13,b:true});
+  });
+
+  // ── 2. Micro bumps ──
+  [[chiplet.x+8,chiplet.x+chiplet.w-8],
+   [logic.x+8,logic.x+logic.w-8],
+   [hbm.x+8,hbm.x+hbm.w-8]
+  ].forEach(([x1,x2])=>{
+    for(let x=x1;x<x2;x+=16){
+      sketchCircle(x+R(2),bumpY+bumpH/2,5,{c:'#5a4a3a',w:1.2,fill:'#8a7a6a',r:1.8,double:true});
+    }
+  });
+
+  // ── 3. Interposer ──
+  sketchRect(ipX,ipY,ipW,ipH,{c:'#5a4a3a',w:1.8,fill:'#c0b8a8',r:2.5});
+
+  // TSVs
+  [cx-120,cx-75,cx-30,cx+15,cx+60,cx+105,cx+140].forEach(x=>{
+    const ty=ipY+8, th=ipH-16;
+    // Left wall
+    ctx.strokeStyle='#4a4a4a'; ctx.lineWidth=1.3;
+    ctx.beginPath();
+    for(let i=0;i<=10;i++){const t=i/10,py=ty+th*t;
+      i===0?ctx.moveTo(x-3+R(1),py):ctx.lineTo(x-3+R(2),py);
+    }
+    ctx.stroke();
+    // Right wall
+    ctx.beginPath();
+    for(let i=0;i<=10;i++){const t=i/10,py=ty+th*t;
+      i===0?ctx.moveTo(x+3+R(1),py):ctx.lineTo(x+3+R(2),py);
+    }
+    ctx.stroke();
+    // Fill
+    ctx.fillStyle='#6a7a8a';
+    ctx.beginPath();
+    for(let i=0;i<=10;i++){const t=i/10,py=ty+th*t; ctx.lineTo(x-1.5+R(1),py);}
+    for(let i=10;i>=0;i--){const t=i/10,py=ty+th*t; ctx.lineTo(x+1.5+R(1),py);}
+    ctx.closePath(); ctx.fill();
+  });
+
+  // ── 4. C4 bumps ──
+  for(let x=ipX+18;x<ipX+ipW-18;x+=24){
+    sketchCircle(x+R(3),c4Y+c4H/2,7+R(1.5),{c:'#4a4a4a',w:1.2,fill:'#9a8a7a',r:2,double:true});
+  }
+
+  // ── 5. Substrate ──
+  sketchRect(subX,subY,subW,subH,{c:'#4a3a2e',w:1.8,fill:'#b8a898',r:2.5});
+  // Internal layers
+  for(let i=1;i<5;i++){
+    const ly=subY+i*(subH/5);
+    ctx.strokeStyle='rgba(60,50,40,0.1)'; ctx.lineWidth=0.6;
+    ctx.beginPath();
+    for(let t=0;t<=1;t+=0.1){ ctx.lineTo(subX+subW*t+R(3),ly+R(1.5)); }
+    ctx.stroke();
+  }
+  // Vias
+  for(let x=subX+25;x<subX+subW-25;x+=38){
+    sketchCircle(x+R(3),subY+subH/2,5,{c:'#4a4a4a',w:1,fill:'#7a6a5a',r:1.5,double:true});
+  }
+
+  // ── 6. BGA ──
+  for(let x=subX+15;x<subX+subW-15;x+=30){
+    sketchCircle(x+R(2),bgaY+16,12,{c:'#3a3a3a',w:1.3,fill:'#a08a7a',r:2,double:true});
+    // Highlight
+    ctx.fillStyle='rgba(255,255,255,0.12)';
+    ctx.beginPath(); ctx.arc(x-3+R(1),bgaY+10+R(1),4,0,Math.PI*2); ctx.fill();
+  }
+
+  // ── Labels (outside the main structure, no overlaps) ──
+  label('微凸块\nMicro Bump', logic.x-10, bumpY+bumpH/2, 5, bumpY-3);
+  label('硅中介层\nInterposer', ipX+ipW+8, ipY+ipH/3, ipX+ipW+30, ipY+ipH/3-5);
+  label('TSV\n硅通孔', cx-5, ipY+ipH/2+18, cx-50, ipY+ipH/2+42);
+  label('C4凸块\nC4 Bump', ipX+ipW+8, c4Y+c4H/2, ipX+ipW+30, c4Y+c4H/2);
+  label('有机基板\nSubstrate', subX+subW+8, subY+subH/2-10, subX+subW+30, subY+subH/2-20);
+  label('BGA焊球\nBGA Ball', subX+subW+8, bgaY+16, subX+subW+30, bgaY+10);
+
+  // ── Corner markers ──
+  ctx.strokeStyle='rgba(74,58,46,0.1)'; ctx.lineWidth=1;
+  [[10,10,25],[W-10,10,-25],[10,H-10,25],[W-10,H-10,-25]].forEach(([x,y,s])=>{
+    ctx.beginPath();
+    for(let i=0;i<4;i++) ctx.lineTo(x+R(s),y+R(s/3));
+    ctx.stroke();
+  });
+})();
+</script>
+</body>
+</html>

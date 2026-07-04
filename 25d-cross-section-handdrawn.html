@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.5D 封装截面 · 手绘风格</title>
+<script src="https://cdn.jsdelivr.net/npm/roughjs@4.6/dist/rough.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Kalam', 'PingFang SC', 'Microsoft YaHei', cursive;
+    background: #faf6ee;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px 10px 40px;
+  }
+  .container { max-width: 720px; width: 100%; }
+  .header { text-align: center; margin-bottom: 16px; }
+  .header h1 {
+    font-size: 26px; font-weight: 700; color: #2c2c2c;
+    font-family: 'Kalam', cursive; letter-spacing: 1px;
+  }
+  .header .subtitle {
+    font-size: 12px; color: #6b5b4f; font-weight: 300;
+    margin-top: 2px;
+  }
+  canvas { display: block; width: 100% !important; border-radius: 4px; }
+  .footer { margin-top: 16px; font-size: 11px; color: #8b7b6f; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>2.5D 封装结构示意图</h1>
+    <p class="subtitle">2.5D IC Package Cross-Section · ✎ 手绘风格</p>
+  </div>
+  <canvas id="crossSection"></canvas>
+  <div class="footer">图中标注：微凸块 / 硅中介层 / TSV / C4 凸块 / 有机基板 / BGA</div>
+</div>
+<script>
+(async function() {
+  const canvas = document.getElementById('crossSection');
+  const rc = rough.canvas(canvas);
+  const W = 680, H = 580;
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = W * ratio; canvas.height = H * ratio;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+
+  // Paper background
+  ctx.fillStyle = '#faf6ee'; ctx.fillRect(0, 0, W, H);
+
+  const drawOpts = { roughness: 1.2, stroke: '#3a3a3a', strokeWidth: 1.6, fillStyle: 'hachure' };
+
+  // ====== Layer positions ======
+  const cx = W / 2;
+  
+  // Chiplet Layer 1 (Logic)
+  const chipW = 120, chipH = 50;
+  const chip1X = cx - chipW - 15, chip1Y = 30;
+  const chip2X = cx + 15, chip2Y = 30;
+  const chip3X = cx - 160, chip3Y = 30; // additional small chiplet
+  
+  // Interposer
+  const interposerY = chip1Y + chipH + 22;
+  const interposerH = 90;
+  
+  // Substrate
+  const subY = interposerY + interposerH + 28;
+  const subH = 80;
+  
+  // BGA
+  const bgaY = subY + subH + 8;
+  
+  // ====== TSV positions in interposer ======
+  const tsvPositions = [cx - 120, cx - 70, cx - 20, cx + 30, cx + 80, cx + 130];
+
+  // ====== Drawing functions ======
+  
+  // Helper: hand-drawn label with leader line
+  function label(text, fromX, fromY, labelX, labelY) {
+    // Leader line (sketchy)
+    ctx.strokeStyle = '#5a5a5a'; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    for (let i = 0; i <= 6; i++) {
+      const t = i / 6;
+      const x = fromX + (labelX - fromX) * t + (Math.random() - 0.5) * 2;
+      const y = fromY + (labelY - fromY) * t + (Math.random() - 0.5) * 2;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    // Small circle at anchor
+    ctx.fillStyle = '#5a5a5a';
+    ctx.beginPath();
+    ctx.arc(fromX, fromY, 2.5, 0, Math.PI * 2); ctx.fill();
+    
+    // Label text
+    ctx.fillStyle = '#3a3a3a';
+    ctx.font = '12px "Kalam", "PingFang SC", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, labelX, labelY);
+  }
+
+  // ====== 1. Chiplets ======
+  function drawChiplet(x, y, w, h, label, fill) {
+    const opts = { ...drawOpts, fill, fillStyle: 'solid', roughness: 1.5 };
+    rc.rectangle(x, y, w, h, opts);
+    // Chip internal texture: tiny diagonal sketch lines
+    ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < w; i += 12) {
+      ctx.beginPath(); ctx.moveTo(x + i, y); ctx.lineTo(x + i, y + h); ctx.stroke();
+    }
+    ctx.fillStyle = '#1a1a1a'; ctx.font = 'bold 13px "Kalam", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(label, x + w/2, y + h/2);
+  }
+
+  // Draw 3 chiplets
+  drawChiplet(chip1X, chip1Y, chipW, chipH, 'Logic', '#d4c8b8');
+  drawChiplet(chip2X, chip2Y, chipW, chipH, 'HBM', '#c8b8a8');
+  drawChiplet(chip3X, chip3Y, 70, chipH, 'Chiplet', '#d0c0b0');
+
+  // ====== 2. Micro bumps ======
+  const bumpY1 = chip1Y + chipH + 4;
+  const bumpH = 14;
+  
+  // Draw micro bumps as tiny sketched rectangles
+  const bumpPositions = [];
+  for (let x = chip1X + 10; x < chip1X + chipW - 10; x += 14) bumpPositions.push(x);
+  for (let x = chip2X + 10; x < chip2X + chipW - 10; x += 14) bumpPositions.push(x);
+  for (let x = chip3X + 10; x < chip3X + 70 - 10; x += 14) bumpPositions.push(x);
+  
+  bumpPositions.forEach(x => {
+    rc.ellipse(x + Math.random()*2, bumpY1 + bumpH/2, 8, bumpH - 4, {
+      roughness: 1.5, stroke: '#5a5a5a', strokeWidth: 1.2,
+      fill: '#8a7a6a', fillStyle: 'solid'
+    });
+  });
+
+  // ====== 3. Interposer ======
+  const ipW = 380;
+  const ipX = cx - ipW / 2;
+  rc.rectangle(ipX, interposerY, ipW, interposerH, {
+    ...drawOpts, fill: '#c0b8a8', fillStyle: 'solid', roughness: 1.3
+  });
+
+  // ====== 4. TSVs ======
+  const tsvH = interposerH - 12;
+  const tsvY = interposerY + 6;
+  tsvPositions.forEach(x => {
+    // TSV via hole with slight wobble
+    ctx.strokeStyle = '#5a5a5a'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10;
+      const py = tsvY + tsvH * t;
+      const wobble = (t > 0.1 && t < 0.9) ? (Math.random() - 0.5) * 2 : 0;
+      i === 0 ? ctx.moveTo(x + wobble - 3, py) : ctx.lineTo(x + wobble - 3, py);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10;
+      const py = tsvY + tsvH * t;
+      const wobble = (t > 0.1 && t < 0.9) ? (Math.random() - 0.5) * 2 : 0;
+      i === 0 ? ctx.moveTo(x + wobble + 3, py) : ctx.lineTo(x + wobble + 3, py);
+    }
+    ctx.stroke();
+    // TSV fill
+    ctx.fillStyle = '#6a7a8a';
+    ctx.beginPath();
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10;
+      const py = tsvY + tsvH * t;
+      const w = 1 + Math.random() * 2;
+      i === 0 ? ctx.moveTo(x - w, py) : ctx.lineTo(x - w, py);
+    }
+    for (let i = 10; i >= 0; i--) {
+      const t = i / 10;
+      const py = tsvY + tsvH * t;
+      const w = 1 + Math.random() * 2;
+      ctx.lineTo(x + w, py);
+    }
+    ctx.closePath(); ctx.fill();
+  });
+
+  // ====== 5. RDL lines on interposer ======
+  ctx.strokeStyle = 'rgba(200,120,60,0.3)'; ctx.lineWidth = 1;
+  for (let i = 0; i < 8; i++) {
+    const y = interposerY + 15 + i * 8;
+    const x1 = ipX + 10 + Math.random() * 20;
+    const x2 = ipX + ipW - 10 - Math.random() * 20;
+    ctx.beginPath(); ctx.moveTo(x1, y + Math.random() * 3);
+    for (let t = 0; t <= 1; t += 0.1) {
+      const px = x1 + (x2 - x1) * t;
+      const py2 = y + Math.sin(t * Math.PI * 4) * 2 + (Math.random() - 0.5) * 1.5;
+      ctx.lineTo(px, py2);
+    }
+    ctx.stroke();
+  }
+
+  // ====== 6. C4 bumps ======
+  const c4Y1 = interposerY + interposerH + 4;
+  const c4H = 16;
+  for (let x = ipX + 20; x < ipX + ipW - 20; x += 22) {
+    const r = 6 + Math.random() * 3;
+    rc.ellipse(x + Math.random() * 3, c4Y1 + c4H/2, r * 2 - 2, c4H - 2, {
+      roughness: 1.3, stroke: '#5a5a5a', strokeWidth: 1.2,
+      fill: '#9a8a7a', fillStyle: 'solid'
+    });
+  }
+
+  // ====== 7. Substrate ======
+  const subW = ipW + 40;
+  const subX = cx - subW / 2;
+  rc.rectangle(subX, subY, subW, subH, {
+    roughness: 1.4, stroke: '#3a3a3a', strokeWidth: 1.6,
+    fill: '#b8a898', fillStyle: 'solid'
+  });
+  // Substrate internal layers
+  for (let i = 1; i < 5; i++) {
+    const ly = subY + i * (subH / 5);
+    ctx.strokeStyle = 'rgba(60,50,40,0.15)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    for (let t = 0; t <= 1; t += 0.05) {
+      const px = subX + subW * t + (Math.random() - 0.5) * 3;
+      t === 0 ? ctx.moveTo(px, ly + (Math.random() - 0.5) * 2) : ctx.lineTo(px, ly + (Math.random() - 0.5) * 2);
+    }
+    ctx.stroke();
+  }
+  // Via holes in substrate
+  for (let x = subX + 30; x < subX + subW - 30; x += 35) {
+    rc.circle(x + Math.random()*3, subY + subH/2, 8, { roughness: 1.5, stroke: '#5a5a5a', strokeWidth: 1, fill: '#7a6a5a', fillStyle: 'solid' });
+  }
+
+  // ====== 8. BGA balls ======
+  for (let x = subX + 15; x < subX + subW - 15; x += 28) {
+    rc.circle(x + Math.random() * 2, bgaY + 12, 18, {
+      roughness: 1.4, stroke: '#4a4a4a', strokeWidth: 1.3,
+      fill: '#a08a7a', fillStyle: 'solid'
+    });
+    // BGA highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath(); ctx.arc(x - 2, bgaY + 9, 4, 0, Math.PI*2); ctx.fill();
+  }
+
+  // ====== Labels ======
+  label('微凸块', chip3X + 95, bumpY1 + bumpH/2, 5, bumpY1 + bumpH/2 - 5);
+  label('硅中介层\n(Silicon Interposer)', ipX + ipW + 5, interposerY + interposerH/2, ipX + ipW + 30, interposerY + interposerH/2 - 5);
+  label('TSV', tsvPositions[3] + 10, interposerY + interposerH/2, tsvPositions[3] + 20, interposerY + interposerH/2);
+  label('C4 凸块', ipX + ipW + 5, c4Y1 + c4H/2, ipX + ipW + 30, c4Y1 + c4H/2);
+  label('有机基板\n(Organic Substrate)', subX + subW + 5, subY + subH/2, subX + subW + 30, subY + subH/2 - 5);
+  label('BGA 焊球', subX + subW + 5, bgaY + 12, subX + subW + 30, bgaY + 12);
+
+  // ====== Border decoration ======
+  ctx.strokeStyle = 'rgba(74,58,46,0.1)'; ctx.lineWidth = 1;
+  // Top-left corner
+  ctx.beginPath(); ctx.moveTo(10, 25 + Math.random()*5); ctx.lineTo(10, 10); ctx.lineTo(25 + Math.random()*5, 10);
+  // Top-right corner
+  ctx.beginPath(); ctx.moveTo(W-25-Math.random()*5, 10); ctx.lineTo(W-10, 10); ctx.lineTo(W-10, 25+Math.random()*5);
+  // Bottom-left
+  ctx.beginPath(); ctx.moveTo(10, H-25-Math.random()*5); ctx.lineTo(10, H-10); ctx.lineTo(25+Math.random()*5, H-10);
+  // Bottom-right
+  ctx.beginPath(); ctx.moveTo(W-25-Math.random()*5, H-10); ctx.lineTo(W-10, H-10); ctx.lineTo(W-10, H-25-Math.random()*5);
+  ctx.stroke();
+})();
+</script>
+</body>
+</html>

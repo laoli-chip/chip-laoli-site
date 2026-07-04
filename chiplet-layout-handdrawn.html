@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chiplet 布局架构 · 手绘风格</title>
+<script src="https://cdn.jsdelivr.net/npm/roughjs@4.6/dist/rough.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Kalam', 'PingFang SC', 'Microsoft YaHei', cursive;
+    background: #faf6ee;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px 10px 30px;
+  }
+  .container { max-width: 720px; width: 100%; }
+  .header { text-align: center; margin-bottom: 12px; }
+  .header h1 { font-size: 26px; font-weight: 700; color: #2c2c2c; font-family: 'Kalam', cursive; letter-spacing: 1px; }
+  .header .subtitle { font-size: 12px; color: #6b5b4f; margin-top: 2px; }
+  canvas { display: block; width: 100% !important; border-radius: 4px; }
+  .footer { margin-top: 12px; font-size: 11px; color: #8b7b6f; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Chiplet 布局架构图</h1>
+    <p class="subtitle">Chiplet Layout Architecture · ✎ 手绘风格</p>
+  </div>
+  <canvas id="chipletCanvas"></canvas>
+  <div class="footer">UCIe / Die-to-Die 互连 · 多 Chiplet 异构集成</div>
+</div>
+<script>
+(async function() {
+  const canvas = document.getElementById('chipletCanvas');
+  const rc = rough.canvas(canvas);
+  const W = 660, H = 600;
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = W * ratio; canvas.height = H * ratio;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+
+  // Paper
+  ctx.fillStyle = '#faf6ee'; ctx.fillRect(0, 0, W, H);
+
+  const palettes = {
+    logic: { fill: '#d4c8b8', stroke: '#5a4a3a', label: '#1a1a1a' },
+    hbm: { fill: '#b8c8d4', stroke: '#3a5a6a', label: '#1a1a1a' },
+    io: { fill: '#c8d4b8', stroke: '#4a5a3a', label: '#1a1a1a' },
+    ai: { fill: '#d4b8c8', stroke: '#5a3a4a', label: '#1a1a1a' },
+    serdes: { fill: '#c8c0a8', stroke: '#5a5040', label: '#1a1a1a' },
+    interposer: { fill: '#e8e0d4', stroke: '#6a5a4a', label: '#6a5a4a' },
+  };
+
+  // Legend
+  function drawLegend() {
+    const lx = 10, ly = 10;
+    ctx.fillStyle = '#2c2c2c';
+    ctx.font = 'bold 11px "Kalam", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('图例', lx, ly);
+    const items = [
+      [0, 'Logic', '#d4c8b8'],
+      [1, 'HBM', '#b8c8d4'],
+      [2, 'I/O', '#c8d4b8'],
+      [3, 'AI/GPU', '#d4b8c8'],
+      [4, 'SerDes', '#c8c0a8'],
+    ];
+    items.forEach(([i, label, color]) => {
+      const y = ly + 24 + i * 22;
+      rc.rectangle(lx, y, 20, 16, { roughness: 1, fill: color, fillStyle: 'solid', stroke: '#5a4a3a', strokeWidth: 1 });
+      ctx.fillStyle = '#3a3a3a';
+      ctx.font = '10px "Kalam", sans-serif';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, lx + 26, y + 8);
+    });
+  }
+
+  // Center point for the interposer
+  const cx = W / 2, cy = H / 2 + 15;
+  const ipW = 360, ipH = 340;
+
+  // ====== Interposer / Base Die ======
+  const ipX = cx - ipW / 2, ipY = cy - ipH / 2;
+  rc.rectangle(ipX, ipY, ipW, ipH, {
+    roughness: 1.2, stroke: palettes.interposer.stroke, strokeWidth: 1.8,
+    fill: palettes.interposer.fill, fillStyle: 'solid'
+  });
+
+  // Interposer label
+  ctx.fillStyle = '#6a5a4a';
+  ctx.font = 'italic 11px "Kalam", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText('Silicon Interposer / Base Die', cx, ipY - 6);
+
+  // ====== Chiplet definitions ======
+  // Each chiplet: { x, y, w, h, label, subLabel, palette, ports }
+  const chiplets = [];
+
+  // Center-ish gap for interconnect fabric
+  const g = 14; // gap between chiplets
+
+  // Top row
+  chiplets.push({ x: ipX + 6, y: ipY + 6, w: 148, h: 80, label: 'Logic\nCore', subLabel: 'CPU Cluster', pal: 'logic' });
+  chiplets.push({ x: ipX + 6 + 148 + g, y: ipY + 6, w: 80, h: 80, label: 'L3\nCache', subLabel: 'Shared', pal: 'logic' });
+  chiplets.push({ x: ipX + 6 + 148 + g + 80 + g, y: ipY + 6, w: 96, h: 80, label: 'AI\nAccel.', subLabel: 'NPU Core', pal: 'ai' });
+
+  // Middle row left
+  chiplets.push({ x: ipX + 6, y: ipY + 6 + 80 + g, w: 100, h: 80, label: 'I/O Die', subLabel: 'PCIe/USB', pal: 'io' });
+  chiplets.push({ x: ipX + 6 + 100 + g, y: ipY + 6 + 80 + g, w: 130, h: 80, label: 'Interconnect\nFabric', subLabel: 'UCIe / D2D', pal: 'serdes' });
+  
+  // Right side - HBM stacks (taller)
+  chiplets.push({ x: ipX + ipW - 100 - 6, y: ipY + 6 + 80 + g, w: 100, h: 160, label: 'HBM3\nStack', subLabel: '16-Hi', pal: 'hbm' });
+
+  // Bottom row
+  chiplets.push({ x: ipX + 6, y: ipY + 6 + 80 + g + 80 + g, w: 80, h: 70, label: 'SerDes', subLabel: '112G', pal: 'serdes' });
+  chiplets.push({ x: ipX + 6 + 80 + g, y: ipY + 6 + 80 + g + 80 + g, w: 80, h: 70, label: 'PLL /\nCLK', subLabel: 'Timing', pal: 'io' });
+  chiplets.push({ x: ipX + 6 + 80 + g + 80 + g, y: ipY + 6 + 80 + g + 80 + g, w: 98, h: 70, label: 'PHY', subLabel: 'D2D IF', pal: 'serdes' });
+
+  // Additional small chiplets on the left edge
+  chiplets.push({ x: ipX + 6, y: ipY + ipH - 28, w: 60, h: 22, label: 'PMIC', subLabel: '', pal: 'io' });
+  chiplets.push({ x: ipX + 6 + 60 + 8, y: ipY + ipH - 28, w: 60, h: 22, label: 'eFuse', subLabel: '', pal: 'io' });
+
+  // ====== Draw chiplets ======
+  chiplets.forEach(c => {
+    const p = palettes[c.pal];
+    // Shadow
+    rc.rectangle(c.x + 2, c.y + 2, c.w, c.h, { roughness: 1, fill: 'rgba(0,0,0,0.04)', stroke: 'none' });
+    // Body
+    rc.rectangle(c.x, c.y, c.w, c.h, {
+      roughness: 1.4, stroke: p.stroke, strokeWidth: 1.6,
+      fill: p.fill, fillStyle: 'solid'
+    });
+    // Inner texture
+    ctx.strokeStyle = 'rgba(0,0,0,0.04)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < c.w; i += 10) {
+      ctx.beginPath(); ctx.moveTo(c.x + i, c.y + 2); ctx.lineTo(c.x + i, c.y + c.h - 2); ctx.stroke();
+    }
+    // Label
+    ctx.fillStyle = p.label;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const lines = c.label.split('\n');
+    lines.forEach((line, i) => {
+      ctx.font = (i === 0 ? 'bold ' : '') + '12px "Kalam", "PingFang SC", sans-serif';
+      ctx.fillText(line, c.x + c.w / 2, c.y + c.h / 2 - 8 + i * 16);
+    });
+    // Sub-label
+    if (c.subLabel) {
+      ctx.fillStyle = '#6a5a4a';
+      ctx.font = '9px "Kalam", sans-serif';
+      ctx.fillText(c.subLabel, c.x + c.w / 2, c.y + c.h - 10);
+    }
+  });
+
+  // ====== Interconnect lines (UCIe D2D) ======
+  function drawConnection(x1, y1, x2, y2, style) {
+    const opts = { roughness: 1, stroke: '#6a7a5a', strokeWidth: 1.2 };
+    if (style === 'dashed') {
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(106,122,90,0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x1, y1);
+      const n = 8;
+      for (let i = 0; i <= n; i++) {
+        const t = i / n;
+        const px = x1 + (x2 - x1) * t + (Math.random() - 0.5) * 3;
+        const py = y1 + (y2 - y1) * t + (Math.random() - 0.5) * 3;
+        ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else {
+      ctx.strokeStyle = 'rgba(106,122,90,0.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= 6; i++) {
+        const t = i / 6;
+        const px = x1 + (x2 - x1) * t + (Math.random() - 0.5) * 4;
+        const py = y1 + (y2 - y1) * t + (Math.random() - 0.5) * 4;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+  }
+
+  // Connect chiplets with UCIe links
+  const connect = (a, b, style) => {
+    const ax = a.x + a.w / 2, ay = a.y + a.h / 2;
+    const bx = b.x + b.w / 2, by = b.y + b.h / 2;
+    drawConnection(ax, ay, bx, by, style);
+  };
+
+  // Logic -> Cache
+  connect(chiplets[0], chiplets[1]);
+  // Cache -> AI
+  connect(chiplets[1], chiplets[2]);
+  // Logic -> I/O
+  connect(chiplets[0], chiplets[3]);
+  // I/O -> Fabric
+  connect(chiplets[3], chiplets[4]);
+  // Fabric -> HBM
+  connect(chiplets[4], chiplets[5]);
+  // AI -> HBM
+  connect(chiplets[2], chiplets[5]);
+  // Logic -> Fabric
+  connect(chiplets[0], chiplets[4], 'dashed');
+  // Fabric -> SerDes
+  connect(chiplets[4], chiplets[6]);
+  // Fabric -> PHY
+  connect(chiplets[4], chiplets[8]);
+  // Fabric -> PMIC
+  connect(chiplets[4], chiplets[9]);
+  // SerDes -> PHY
+  connect(chiplets[6], chiplets[8]);
+  // PLL -> Fabric
+  connect(chiplets[7], chiplets[4]);
+
+  // ====== UCIe fabric label ======
+  const fc = chiplets[4]; // Interconnect Fabric
+  ctx.fillStyle = '#6a7a5a';
+  ctx.font = '9px "Kalam", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText('← UCIe Die-to-Die Interconnect →', fc.x + fc.w / 2, fc.y + fc.h + 4);
+
+  // ====== Legend ======
+  drawLegend();
+
+  // ====== External I/O arrows ======
+  // Left side: external I/O
+  const ioChip = chiplets[3]; // I/O Die
+  ctx.strokeStyle = '#5a5a5a'; ctx.lineWidth = 1.5;
+  for (let i = 0; i < 3; i++) {
+    const y = ioChip.y + 15 + i * 25;
+    ctx.beginPath();
+    const wobble = (Math.random() - 0.5) * 3;
+    ctx.moveTo(ipX - 30 + wobble, y);
+    for (let t = 0; t <= 1; t += 0.2) {
+      const px = ipX - 30 + (ipX - ipX + 30) * t + (Math.random() - 0.5) * 2;
+      ctx.lineTo(px + t * 30, y + Math.sin(t * 3) * 2);
+    }
+    ctx.stroke();
+    // Arrowhead
+    ctx.fillStyle = '#5a5a5a';
+    ctx.beginPath(); ctx.moveTo(ipX + 2, y - 4); ctx.lineTo(ipX + 6, y); ctx.lineTo(ipX + 2, y + 4); ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle = '#5a5a5a';
+  ctx.font = '9px "Kalam", sans-serif';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  ctx.fillText('PCIe / USB / Ethernet →', ipX - 8, ioChip.y + 15);
+
+  // Right side: HBM data out
+  ctx.textAlign = 'left';
+  ctx.fillText('← Memory Data', ipX + ipW + 8, chiplets[5].y + chiplets[5].h / 2);
+
+  // Top: AI data
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.fillText('↑ AI Inference Dataflow', chiplets[2].x + chiplets[2].w / 2, chiplets[2].y - 6);
+
+  // Bottom: board interface
+  ctx.textBaseline = 'top';
+  ctx.fillText('↓ 封装基板 / PCB 接口', cx, ipY + ipH + 10);
+
+  // ====== Title underline ======
+  ctx.strokeStyle = 'rgba(44,44,44,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(cx - 90, 46); ctx.lineTo(cx + 90, 46); ctx.stroke();
+})();
+</script>
+</body>
+</html>

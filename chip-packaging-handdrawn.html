@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>芯片封装工艺流程图 · 手绘风格</title>
+<script src="https://cdn.jsdelivr.net/npm/roughjs@4.6/dist/rough.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Kalam', 'PingFang SC', 'Microsoft YaHei', cursive;
+    background: #faf6ee;
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+    padding: 10px 10px 40px;
+  }
+  .container { max-width: 600px; width: 100%; }
+  .header { text-align: center; margin-bottom: 24px; padding: 16px 0 0; }
+  .header h1 {
+    font-size: 28px; font-weight: 700; color: #2c2c2c;
+    letter-spacing: 1px; font-family: 'Kalam', cursive;
+    display: inline-block; position: relative;
+  }
+  .header h1::after {
+    content: ''; display: block; height: 3px; background: #2c2c2c;
+    margin: 4px auto 0; width: 120%; margin-left: -10%; border-radius: 2px;
+  }
+  .header .subtitle { font-size: 13px; color: #6b5b4f; margin-top: 4px; font-weight: 300; }
+  canvas { display: block; width: 100% !important; height: auto !important; border-radius: 4px; }
+  .footer { text-align: center; margin-top: 20px; font-size: 11px; color: #8b7b6f; font-family: 'Kalam', cursive; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>芯片封装工艺流程图</h1>
+    <p class="subtitle">Semiconductor Packaging Process Flow · ✎ 手绘版</p>
+  </div>
+  <canvas id="flowchart"></canvas>
+  <div class="footer">手绘风格 · 芯片封装流程</div>
+</div>
+<script>
+(async function() {
+  const canvas = document.getElementById('flowchart');
+  const rc = rough.canvas(canvas);
+  const W = 560, H = 920;
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = W * ratio; canvas.height = H * ratio;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+  ctx.fillStyle = '#faf6ee'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(160,140,120,0.07)';
+  ctx.lineWidth = 0.5;
+  for (let y = 30; y < H; y += 20) {
+    ctx.beginPath(); ctx.moveTo(20, y); ctx.lineTo(W - 20, y); ctx.stroke();
+  }
+  const cx = W / 2, boxW = 280, boxH = 70, startY = 100;
+  const steps = [
+    { num: '1', cn: '晶圆切割', en: 'Wafer Dicing', desc: '将晶圆切割成独立的芯片单元' },
+    { num: '2', cn: '芯片贴装', en: 'Die Attach', desc: '芯片精确粘贴到引线框架上' },
+    { num: '3', cn: '引线键合', en: 'Wire Bonding', desc: '金属引线连接焊盘与引脚' },
+    { num: '4', cn: '塑封', en: 'Molding', desc: '环氧树脂封装保护芯片' },
+    { num: '5', cn: '打标', en: 'Marking', desc: '激光刻印产品标识信息' },
+    { num: '6', cn: '切割成型', en: 'Singulation', desc: '从框架上分离为独立封装体' },
+    { num: '7', cn: '测试分选', en: 'Testing', desc: '电性能测试并分档包装出货' },
+  ];
+  function drawBox(y, s) {
+    const x = cx - boxW/2;
+    rc.rectangle(x+2, y+2, boxW, boxH, { fill: 'rgba(0,0,0,0.03)', roughness: 1, stroke: 'none' });
+    rc.rectangle(x, y, boxW, boxH, { fill: 'white', fillStyle: 'solid', roughness: 1.5, stroke: '#4a3a2e', strokeWidth: 1.8 });
+    rc.circle(x + 36, y + boxH/2, 32, { fill: '#2c2c2c', fillStyle: 'solid', roughness: 1.2, stroke: '#2c2c2c', strokeWidth: 1.5 });
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 15px "Kalam", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(s.num, x + 36, y + boxH/2 + 1);
+    ctx.fillStyle = '#2c2c2c';
+    ctx.font = 'bold 16px "Kalam", "PingFang SC", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(s.cn, x + 60, y + boxH/2 - 10);
+    ctx.fillStyle = '#6b5b4f';
+    ctx.font = 'italic 11px "Kalam", sans-serif';
+    ctx.fillText(s.en, x + 60, y + boxH/2 + 10);
+    ctx.fillStyle = '#8b7b6f';
+    ctx.font = '11px "Kalam", "PingFang SC", sans-serif';
+    ctx.fillText(s.desc, x + 60, y + boxH/2 + 26);
+  }
+  function drawArrow(fromY, toY) {
+    ctx.strokeStyle = '#4a3a2e'; ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    for (let i = 0; i <= 8; i++) {
+      const t = i / 8, yy = fromY + (toY - fromY) * t;
+      const wobble = (Math.random() - 0.5) * 2.5;
+      const xx = (i === 0 || i === 8) ? cx : cx + wobble;
+      i === 0 ? ctx.moveTo(xx, yy) : ctx.lineTo(xx, yy);
+    }
+    ctx.stroke();
+    ctx.fillStyle = '#4a3a2e';
+    ctx.beginPath();
+    const a = 7;
+    ctx.moveTo(cx - a, toY - a); ctx.lineTo(cx, toY); ctx.lineTo(cx + a, toY - a);
+    ctx.closePath(); ctx.fill();
+  }
+  const gap = boxH + 20;
+  for (let i = 0; i < steps.length; i++) {
+    drawBox(startY + i * gap, steps[i]);
+    if (i < steps.length - 1) drawArrow(startY + i * gap + boxH + 2, startY + (i + 1) * gap - 6);
+  }
+})();
+</script>
+</body>
+</html>

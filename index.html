@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>芯片专家老李Ai · 个人知识站</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --navy: #0a1628;
+    --navy-light: #0f1f3a;
+    --navy-mid: #162a50;
+    --blue-deep: #1a3a6b;
+    --blue: #2b6cb0;
+    --blue-light: #3b82f6;
+    --blue-glow: #60a5fa;
+    --teal: #06b6d4;
+    --teal-light: #22d3ee;
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+    --amber: #f59e0b;
+    --amber-light: #fbbf24;
+    --emerald: #10b981;
+    --rose: #f43f5e;
+    --indigo: #6366f1;
+    --violet: #8b5cf6;
+    --cyan: #06b6d4;
+    --card-bg: #ffffff;
+    --body-bg: #f0f4f8;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-xs: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--body-bg); color: var(--slate-800);
+    line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,22,40,0.96); backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0 32px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  nav .logo {
+    font-weight: 800; font-size: 1.1rem; color: #fff;
+    letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  nav .logo .chip-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--blue-glow), var(--teal));
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  nav .logo span { color: var(--blue-glow); }
+
+  nav .nav-links { display: flex; gap: 2px; list-style: none; }
+
+  nav .nav-links a {
+    color: var(--slate-400); text-decoration: none;
+    font-size: 0.85rem; padding: 8px 16px; border-radius: 8px;
+    transition: all 0.2s; font-weight: 500;
+  }
+
+  nav .nav-links a:hover,
+  nav .nav-links a.active { color: #fff; background: rgba(255,255,255,0.08); }
+
+  .hamburger {
+    display: none; background: none; border: none;
+    color: #fff; font-size: 1.6rem; cursor: pointer; padding: 4px;
+  }
+
+  .hero {
+    padding: 140px 32px 100px;
+    background: linear-gradient(135deg, var(--navy) 0%, #0c1e3a 40%, var(--navy) 100%);
+    position: relative; overflow: hidden; text-align: center;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 700px 500px at 15% 25%, rgba(59,130,246,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 600px 600px at 80% 50%, rgba(6,182,212,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 400px 400px at 50% 80%, rgba(139,92,246,0.05) 0%, transparent 70%);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59,130,246,0.3), rgba(6,182,212,0.3), transparent);
+  }
+
+  .hero-circuit {
+    position: absolute; inset: 0; z-index: 0; opacity: 0.04;
+    background-image:
+      linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px),
+      linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 20px; border-radius: 24px;
+    background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2);
+    color: var(--blue-glow); font-size: 0.82rem; font-weight: 600;
+    letter-spacing: 0.04em; margin-bottom: 28px;
+  }
+
+  .hero-badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--emerald);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .hero h1 {
+    font-size: 3rem; font-weight: 800; color: #fff;
+    line-height: 1.2; margin-bottom: 16px; letter-spacing: -0.02em;
+  }
+
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--blue-glow), var(--teal-light));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem; color: var(--slate-400);
+    max-width: 680px; margin: 0 auto 36px; line-height: 1.8;
+  }
+
+  .hero-cta {
+    display: flex; justify-content: center; gap: 16px;
+    flex-wrap: wrap; margin-bottom: 48px;
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--blue-light), var(--blue));
+    color: #fff; font-weight: 600; font-size: 0.95rem;
+    text-decoration: none; transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(59,130,246,0.25);
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(59,130,246,0.35); }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--slate-300); font-weight: 500; font-size: 0.95rem;
+    text-decoration: none; transition: all 0.3s;
+  }
+
+  .btn-outline:hover { border-color: var(--blue-glow); color: #fff; background: rgba(59,130,246,0.08); }
+
+  .hero-stats { display: flex; justify-content: center; gap: 56px; flex-wrap: wrap; }
+
+  .hero-stat { text-align: center; }
+
+  .hero-stat .num { font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.1; }
+
+  .hero-stat .num span { color: var(--blue-glow); }
+
+  .hero-stat .label { font-size: 0.82rem; color: var(--slate-500); margin-top: 2px; }
+
+  .section { max-width: 1120px; margin: 0 auto; padding: 80px 32px; }
+
+  .section-title {
+    font-size: 1.75rem; font-weight: 700; color: var(--slate-900);
+    margin-bottom: 8px; letter-spacing: -0.01em;
+  }
+
+  .section-subtitle {
+    font-size: 1rem; color: var(--slate-500); margin-bottom: 48px;
+    max-width: 640px; line-height: 1.7;
+  }
+
+  .section-header-centered { text-align: center; }
+
+  .section-header-centered .section-subtitle { margin: 0 auto 48px; }
+
+  .section-alt { background: #fff; }
+
+  .scroll-pad { scroll-margin-top: 80px; }
+
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+
+  .about-text p { font-size: 0.95rem; color: var(--slate-600); line-height: 1.8; margin-bottom: 16px; }
+
+  .about-text .quote {
+    font-size: 1rem; font-style: italic; color: var(--slate-500);
+    padding: 20px 24px; border-left: 3px solid var(--blue-light);
+    background: var(--slate-50); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin: 24px 0;
+  }
+
+  .about-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+
+  .tag { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; background: var(--slate-100); color: var(--slate-700); }
+  .tag-blue { background: rgba(59,130,246,0.1); color: var(--blue); }
+  .tag-teal { background: rgba(6,182,212,0.1); color: var(--teal); }
+  .tag-violet { background: rgba(139,92,246,0.1); color: var(--violet); }
+  .tag-amber { background: rgba(245,158,11,0.1); color: var(--amber); }
+  .tag-emerald { background: rgba(16,185,129,0.1); color: var(--emerald); }
+
+  .expertise-cards { display: grid; gap: 16px; }
+
+  .expertise-card {
+    padding: 20px 24px; border-radius: var(--radius-sm); border: 1px solid var(--slate-200);
+    background: var(--card-bg); transition: all 0.3s;
+  }
+
+  .expertise-card:hover { border-color: var(--slate-300); box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+
+  .expertise-card .ec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+
+  .expertise-card .ec-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+
+  .expertise-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--slate-900); }
+
+  .expertise-card p { font-size: 0.82rem; color: var(--slate-500); line-height: 1.6; }
+
+  .books-showcase { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+
+  .book-card { background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--slate-200); overflow: hidden; transition: all 0.3s; display: flex; flex-direction: column; }
+
+  .book-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.06); transform: translateY(-3px); }
+
+  .book-card-top { padding: 28px 28px 0; }
+
+  .book-num { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 14px; }
+  .bn-1 { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .bn-2 { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+  .bn-3 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+  .bn-4 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+  .book-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--slate-900); line-height: 1.4; margin-bottom: 6px; }
+
+  .book-card .book-sub { font-size: 0.82rem; color: var(--slate-500); margin-bottom: 10px; }
+
+  .book-card .book-desc { font-size: 0.88rem; color: var(--slate-600); line-height: 1.7; margin-bottom: 16px; }
+
+  .book-card .book-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+
+  .book-card .book-meta span { font-size: 0.78rem; padding: 3px 10px; border-radius: 4px; background: var(--slate-100); color: var(--slate-600); font-weight: 500; }
+
+  .book-card-bottom { margin-top: auto; padding: 0 28px 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .book-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: all 0.25s; }
+
+  .book-btn-detail { background: var(--slate-100); color: var(--slate-700); }
+  .book-btn-detail:hover { background: var(--slate-200); }
+
+  .book-btn-buy { background: linear-gradient(135deg, var(--blue-light), var(--blue)); color: #fff; box-shadow: 0 2px 10px rgba(59,130,246,0.2); }
+
+  .book-btn-buy:hover { box-shadow: 0 4px 16px rgba(59,130,246,0.3); transform: translateY(-1px); }
+
+  .book-tools { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .book-tools span { font-size: 0.72rem; padding: 2px 8px; border-radius: 3px; background: var(--slate-50); color: var(--slate-500); border: 1px solid var(--slate-200); }
+
+  .knowledge-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+
+  .knowledge-card { background: var(--card-bg); border-radius: var(--radius-sm); border: 1px solid var(--slate-200); padding: 28px; transition: all 0.3s; text-decoration: none; display: block; }
+
+  .knowledge-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.05); transform: translateY(-2px); border-color: var(--slate-300); }
+
+  .knowledge-card .kc-tag { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; margin-bottom: 12px; }
+  .kct-blue { background: rgba(59,130,246,0.1); color: var(--blue); }
+  .kct-teal { background: rgba(6,182,212,0.1); color: var(--teal); }
+  .kct-violet { background: rgba(139,92,246,0.1); color: var(--violet); }
+  .kct-amber { background: rgba(245,158,11,0.1); color: var(--amber); }
+  .kct-emerald { background: rgba(16,185,129,0.1); color: var(--emerald); }
+  .kct-rose { background: rgba(244,63,94,0.1); color: var(--rose); }
+
+  .knowledge-card h4 { font-size: 0.95rem; font-weight: 600; color: var(--slate-900); margin-bottom: 8px; line-height: 1.4; }
+
+  .knowledge-card p { font-size: 0.82rem; color: var(--slate-500); line-height: 1.6; margin-bottom: 16px; }
+
+  .knowledge-card .kc-foot { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--slate-400); border-top: 1px solid var(--slate-100); padding-top: 14px; }
+
+  .knowledge-card .kc-foot .platform { display: flex; gap: 6px; }
+
+  .knowledge-card .kc-foot .platform span { padding: 1px 6px; border-radius: 3px; font-size: 0.68rem; background: var(--slate-100); color: var(--slate-500); }
+
+  .social-section { background: linear-gradient(135deg, var(--navy) 0%, #0c1e3a 50%, var(--navy) 100%); color: #fff; position: relative; overflow: hidden; }
+
+  .social-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 50%, rgba(59,130,246,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 400px 400px at 80% 30%, rgba(6,182,212,0.05) 0%, transparent 70%);
+  }
+
+  .social-section .section { position: relative; z-index: 1; }
+  .social-section .section-title { color: #fff; }
+  .social-section .section-subtitle { color: var(--slate-400); }
+
+  .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+  .social-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius); padding: 36px 28px; text-align: center; transition: all 0.3s; }
+
+  .social-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.15); transform: translateY(-3px); }
+
+  .social-card .sc-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 28px; }
+  .sc-icon-wechat { background: rgba(7,193,96,0.15); }
+  .sc-icon-bilibili { background: rgba(0,179,159,0.15); }
+  .sc-icon-xhs { background: rgba(255,56,57,0.12); }
+
+  .social-card h4 { font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 6px; }
+
+  .social-card p { font-size: 0.82rem; color: var(--slate-400); line-height: 1.6; margin-bottom: 18px; }
+
+  .social-card .sc-id { display: inline-block; padding: 6px 18px; border-radius: 6px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--slate-300); font-size: 0.85rem; font-weight: 500; }
+
+  .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+
+  .contact-info h3 { font-size: 1.1rem; font-weight: 600; color: var(--slate-900); margin-bottom: 16px; }
+
+  .contact-info p { font-size: 0.9rem; color: var(--slate-600); line-height: 1.8; margin-bottom: 24px; }
+
+  .contact-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-xs); background: var(--slate-50); margin-bottom: 10px; font-size: 0.88rem; color: var(--slate-700); }
+
+  .contact-item .ci-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  .contact-form { background: var(--card-bg); border: 1px solid var(--slate-200); border-radius: var(--radius); padding: 32px; }
+
+  .contact-form h3 { font-size: 1.05rem; font-weight: 600; color: var(--slate-900); margin-bottom: 20px; }
+
+  .form-group { margin-bottom: 16px; }
+
+  .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--slate-700); margin-bottom: 6px; }
+
+  .form-group input, .form-group textarea {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--slate-200); border-radius: var(--radius-xs);
+    font-size: 0.9rem; font-family: inherit; color: var(--slate-800);
+    background: var(--slate-50); transition: border-color 0.2s; outline: none;
+  }
+
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--blue-light); background: #fff; }
+
+  .form-group textarea { height: 100px; resize: vertical; }
+
+  .submit-btn {
+    padding: 12px 32px; border-radius: 8px; border: none;
+    background: linear-gradient(135deg, var(--blue-light), var(--blue));
+    color: #fff; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.3s; width: 100%;
+  }
+
+  .submit-btn:hover { box-shadow: 0 4px 16px rgba(59,130,246,0.3); transform: translateY(-1px); }
+
+  footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.04); padding: 48px 32px 32px; text-align: center; }
+
+  footer .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 20px; }
+
+  footer .footer-links a { color: var(--slate-400); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+
+  footer .footer-links a:hover { color: var(--blue-glow); }
+
+  footer .copyright { font-size: 0.78rem; color: var(--slate-500); }
+
+  footer .social-mini { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+
+  footer .social-mini a { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); color: var(--slate-400); text-decoration: none; font-size: 16px; transition: all 0.2s; }
+
+  footer .social-mini a:hover { background: rgba(255,255,255,0.08); color: var(--blue-glow); }
+
+  .subscribe-bar {
+    background: linear-gradient(135deg, rgba(7,193,96,0.08), rgba(7,193,96,0.02));
+    border: 1px solid rgba(7,193,96,0.15); border-radius: var(--radius);
+    padding: 28px 36px; display: flex; align-items: center;
+    justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-top: 32px;
+  }
+
+  .subscribe-bar .sb-text { display: flex; align-items: center; gap: 12px; }
+
+  .subscribe-bar .sb-text span { font-size: 0.9rem; color: var(--slate-600); line-height: 1.6; }
+
+  .subscribe-bar .sb-text strong { color: #07c160; }
+
+  .subscribe-bar .sb-input { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .subscribe-bar .sb-input input { padding: 8px 14px; border: 1px solid var(--slate-200); border-radius: var(--radius-xs); font-size: 0.85rem; outline: none; width: 200px; }
+
+  .subscribe-bar .sb-input input:focus { border-color: #07c160; }
+
+  .subscribe-bar .sb-input button {
+    padding: 8px 20px; border: none; border-radius: var(--radius-xs);
+    background: #07c160; color: #fff; font-weight: 600;
+    font-size: 0.85rem; cursor: pointer; transition: background 0.2s;
+  }
+
+  .subscribe-bar .sb-input button:hover { background: #06ad56; }
+
+  .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1024px) {
+    .books-showcase { grid-template-columns: 1fr; }
+    .knowledge-grid { grid-template-columns: 1fr 1fr; }
+    .social-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    .hamburger { display: block; }
+    nav .nav-links {
+      display: none; position: absolute; top: 64px; left: 0; right: 0;
+      background: rgba(10,22,40,0.98); flex-direction: column;
+      padding: 12px 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 4px;
+    }
+    nav .nav-links.open { display: flex; }
+    nav .nav-links a { padding: 10px 14px; }
+    .hero { padding: 110px 20px 60px; }
+    .hero h1 { font-size: 1.8rem; }
+    .hero-sub { font-size: 1rem; }
+    .hero-stats { gap: 24px; }
+    .section { padding: 48px 20px; }
+    .section-title { font-size: 1.35rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 32px; }
+    .knowledge-grid { grid-template-columns: 1fr; }
+    .social-grid { grid-template-columns: 1fr; }
+    .contact-wrap { grid-template-columns: 1fr; }
+    .books-showcase { gap: 16px; }
+    .book-card-top { padding: 20px 20px 0; }
+    .book-card-bottom { padding: 0 20px 20px; }
+    .hero-stat .num { font-size: 1.5rem; }
+    .hero-cta { flex-direction: column; align-items: center; }
+    .btn-primary, .btn-outline { width: 100%; justify-content: center; }
+    .subscribe-bar { flex-direction: column; text-align: center; padding: 20px; }
+    .subscribe-bar .sb-input { width: 100%; }
+    .subscribe-bar .sb-input input { flex: 1; }
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 1.5rem; }
+    .book-card h3 { font-size: 0.95rem; }
+    .hero-badge { font-size: 0.72rem; padding: 4px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="chip-icon">&#9670;</div>
+    芯片专家<span>老李Ai</span>
+  </div>
+  <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+  <ul class="nav-links">
+    <li><a href="#home" class="active">首页</a></li>
+    <li><a href="#about">关于我</a></li>
+    <li><a href="#books">系列丛书</a></li>
+    <li><a href="#knowledge">知识库</a></li>
+    <li><a href="#social">关注我</a></li>
+    <li><a href="#contact">联系</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ── -->
+<section id="home" class="hero">
+  <div class="hero-circuit"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      20 年半导体行业实战沉淀
+    </div>
+    <h1>芯片专家 <span class="highlight">老李Ai</span></h1>
+    <p class="hero-sub">
+      从 0.13&mu;m 到 3nm，从单芯片到 Chiplet 堆叠<br>
+      二十年踩坑经验凝练为四本实战指南，覆盖芯片全生命周期工程闭环
+    </p>
+    <div class="hero-cta">
+      <a href="#books" class="btn-primary">&#128214; 浏览系列丛书</a>
+      <a href="#social" class="btn-outline">&#128279; 关注我的内容</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num"><span>4</span></div><div class="label">本系列丛书</div></div>
+      <div class="hero-stat"><div class="num"><span>99</span>+</div><div class="label">章实战内容</div></div>
+      <div class="hero-stat"><div class="num"><span>20</span></div><div class="label">年行业积淀</div></div>
+      <div class="hero-stat"><div class="num"><span>4</span></div><div class="label">个完整设计案例</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── About ── -->
+<section id="about" class="section scroll-pad fade-in">
+  <h2 class="section-title">关于我</h2>
+  <p class="section-subtitle">从一线工程师到知识分享者，二十年只做一件事——把芯片做好</p>
+  <div class="about-grid">
+    <div class="about-text">
+      <p><strong>芯片专家老李Ai</strong>，在半导体行业摸爬滚打了二十年（2006–2026）。职业生涯横跨<strong>芯片设计、封装设计、测试验证、质量管理、可靠性工程</strong>多个领域，曾在 NXP 海外先进封装工厂深入一线。</p>
+      <p>从 0.13&mu;m 到 3nm 工艺节点，从简单 MCU 到数十亿晶体管 AI 加速器，从单芯片到 Chiplet 堆叠——见证并参与了半导体行业最具变革的二十年。</p>
+      <p>2018 年开始在微信公众号「芯片专家老李Ai」发表技术文章，至今已积累数百篇原创内容，累计读者覆盖国内主流 EDA 与封装设计团队。</p>
+      <div class="quote">"这四本书不是'写出来的'，是二十年踩坑踩出来的。"</div>
+      <div class="about-tags">
+        <span class="tag tag-blue">芯片设计</span>
+        <span class="tag tag-teal">先进封装</span>
+        <span class="tag tag-violet">EDA 验证</span>
+        <span class="tag tag-amber">2.5D/3D IC</span>
+        <span class="tag tag-emerald">Chiplet</span>
+        <span class="tag tag-blue">SI/PI 仿真</span>
+        <span class="tag tag-teal">可靠性工程</span>
+        <span class="tag tag-violet">Calibre</span>
+      </div>
+    </div>
+    <div class="expertise-cards">
+      <div class="expertise-card">
+        <div class="ec-header">
+          <div class="ec-icon" style="background:rgba(59,130,246,0.1);color:var(--blue);">&#9881;</div>
+          <h4>全流程芯片设计</h4>
+        </div>
+        <p>RTL → 物理实现 → DFM → Mask — 熟悉从架构定义到 Tape-out 的完整设计流，精通 PPA 三角权衡与跨团队协作。</p>
+      </div>
+      <div class="expertise-card">
+        <div class="ec-header">
+          <div class="ec-icon" style="background:rgba(6,182,212,0.1);color:var(--teal);">&#9878;</div>
+          <h4>先进封装设计</h4>
+        </div>
+        <p>2.5D/3D IC 封装设计方法论：中介层规划、RDL 走线、TSV 设计、微凸块布局、多芯片协同与 Chiplet 集成。</p>
+      </div>
+      <div class="expertise-card">
+        <div class="ec-header">
+          <div class="ec-icon" style="background:rgba(139,92,246,0.1);color:var(--violet);">&#128202;</div>
+          <h4>EDA 工具链全栈</h4>
+        </div>
+        <p>双工具链精通：Siemens (Innovator3D IC / Calibre / Xpedition) + Cadence (APD / Integrity / PVS)，及跨工具数据协同。</p>
+      </div>
+      <div class="expertise-card">
+        <div class="ec-header">
+          <div class="ec-icon" style="background:rgba(245,158,11,0.1);color:var(--amber);">&#128200;</div>
+          <h4>测试与可靠性</h4>
+        </div>
+        <p>CP/FT 测试策略、可靠性验证（HTOL/HAST/TCT）、失效分析、RMA 管理——打通从晶圆到客户应用的完整质量闭环。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Books ── -->
+<section id="books" class="section section-alt scroll-pad fade-in">
+  <div class="section-header-centered">
+    <h2 class="section-title">系列丛书</h2>
+    <p class="section-subtitle">四本书，三个视角，一条完整的芯片实战路径。每本书独立成体系，合在一起覆盖从芯片设计到封测应用的完整知识地图</p>
+  </div>
+
+  <div class="books-showcase">
+    <div class="book-card">
+      <div class="book-card-top">
+        <div class="book-num bn-1">1</div>
+        <h3>半导体实战：从设计到应用全流程指南</h3>
+        <div class="book-sub">芯片全生命周期通识</div>
+        <div class="book-desc">刚入行的芯片设计工程师，想知道"我的工作在产业链的哪个位置"？这本书帮你打通上下游的知识盲区，覆盖从架构定义到客户应用的完整生命周期。</div>
+        <div class="book-meta"><span>18 章 + 4 附录</span><span>通识入门</span></div>
+        <div class="book-tools"><span>产业链全景</span><span>RTL 设计</span><span>物理实现</span><span>封装体系</span><span>测试验证</span></div>
+      </div>
+      <div class="book-card-bottom">
+        <a href="/四本书系列介绍.html#book1" class="book-btn book-btn-detail">&#128269; 查看详情</a>
+        <a href="#" class="book-btn book-btn-buy">&#128722; 购买</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <div class="book-card-top">
+        <div class="book-num bn-2">2</div>
+        <h3>先进封装设计实战：基于 Cadence 的 2.5D/3D IC 设计全流程</h3>
+        <div class="book-sub">封装设计方法论</div>
+        <div class="book-desc">不讲"点哪个菜单"，而是讲"为什么选这个方案"。从封装选型、叠层设计到 2.5D/3D IC 完整流程，25 章构建系统化封装设计知识体系。</div>
+        <div class="book-meta"><span>25 章 + 3 附录</span><span>方法进阶</span></div>
+        <div class="book-tools"><span>APD</span><span>2.5D</span><span>3D Stack</span><span>Chiplet</span><span>UCIe</span><span>SI/PI</span></div>
+      </div>
+      <div class="book-card-bottom">
+        <a href="/四本书系列介绍.html#book2" class="book-btn book-btn-detail">&#128269; 查看详情</a>
+        <a href="#" class="book-btn book-btn-buy">&#128722; 购买</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <div class="book-card-top">
+        <div class="book-num bn-3">3</div>
+        <h3>EDA 封装验证实战 — Cadence 版</h3>
+        <div class="book-sub" style="color:var(--violet);">APD + Integrity 3D-IC + PVS 工具链</div>
+        <div class="book-desc">使用四个真实设计案例（Phoenix / Atlas / Nexus / 案例四），从工具操作视角完成封装验证任务。适合团队使用 Cadence 工具链的工程师。</div>
+        <div class="book-meta"><span>29 章 + 7 附录</span><span>工具实战</span></div>
+        <div class="book-tools"><span>APD</span><span>Integrity 3D-IC</span><span>PVS</span><span>Sigrity</span><span>Quantus</span></div>
+      </div>
+      <div class="book-card-bottom">
+        <a href="/四本书系列介绍.html#books34" class="book-btn book-btn-detail">&#128269; 查看详情</a>
+        <a href="#" class="book-btn book-btn-buy">&#128722; 购买</a>
+      </div>
+    </div>
+
+    <div class="book-card">
+      <div class="book-card-top">
+        <div class="book-num bn-4">4</div>
+        <h3>EDA 封装验证实战 — Siemens 版</h3>
+        <div class="book-sub" style="color:var(--amber);">Innovator3D IC + Calibre 工具链</div>
+        <div class="book-desc">使用完全相同的四个设计案例，从 Siemens 工具链视角完成验证。适合团队使用 Siemens EDA 工具链的封装设计与验证工程师。</div>
+        <div class="book-meta"><span>27 章 + 6 附录</span><span>工具实战</span></div>
+        <div class="book-tools"><span>Innovator3D IC</span><span>Calibre</span><span>Aprisa</span><span>Xpedition</span><span>HyperLynx</span></div>
+      </div>
+      <div class="book-card-bottom">
+        <a href="/四本书系列介绍.html#books34" class="book-btn book-btn-detail">&#128269; 查看详情</a>
+        <a href="#" class="book-btn book-btn-buy">&#128722; 购买</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:36px;">
+    <a href="/四本书系列介绍.html" class="btn-primary" style="display:inline-flex;">&#128214; 完整书籍介绍与选书指南</a>
+  </div>
+</section>
+
+<!-- ── Knowledge ── -->
+<section id="knowledge" class="section scroll-pad fade-in">
+  <div class="section-header-centered">
+    <h2 class="section-title">知识库</h2>
+    <p class="section-subtitle">精选技术文章，覆盖芯片设计、封装验证、EDA 工具实战。同步发布于微信公众号、B站、小红书</p>
+  </div>
+
+  <div class="knowledge-grid">
+    <a href="#" class="knowledge-card">
+      <span class="kc-tag kct-blue">2.5D/3D IC</span>
+      <h4>Chiplet 架构下的中介层设计：从规划到 Signoff</h4>
+      <p>深入解析 UCIe 标准下的中介层设计要点，涵盖 RDL 布线策略、TSV 布局、热管理及跨 chiplet 信号完整性优化。</p>
+      <div class="kc-foot">
+        <span>2026-06-28</span>
+        <div class="platform"><span>公众号</span><span>B站</span></div>
+      </div>
+    </a>
+
+    <a href="/EDA封装验证实战_目录.pdf.html" class="knowledge-card">
+      <span class="kc-tag kct-violet">EDA 工具</span>
+      <h4>EDA 封装验证实战：双工具链全景对比</h4>
+      <p>Siemens 与 Cadence 双工具链的全流程映射对比，助你快速切换工具生态。</p>
+      <div class="kc-foot">
+        <span>2026-06-15</span>
+        <div class="platform"><span>公众号</span><span>小红书</span></div>
+      </div>
+    </a>
+
+    <a href="/chip-packaging-flowchart.html" class="knowledge-card">
+      <span class="kc-tag kct-teal">封装工艺</span>
+      <h4>芯片封装工艺流程全景图：从晶圆到成品</h4>
+      <p>一张图看懂封装全流程：减薄、划片、贴片、打线、塑封、植球、切割、测试——每个环节的关键控制点与常见问题。</p>
+      <div class="kc-foot">
+        <span>2026-06-10</span>
+        <div class="platform"><span>B站</span><span>小红书</span></div>
+      </div>
+    </a>
+
+    <a href="#" class="knowledge-card">
+      <span class="kc-tag kct-amber">可靠性</span>
+      <h4>车规芯片可靠性验证：HTOL/HAST/TCT 实战解读</h4>
+      <p>基于 AEC-Q100 标准，详解车规芯片可靠性验证项目的试验条件、失效机理与工程判断方法。</p>
+      <div class="kc-foot">
+        <span>2026-05-28</span>
+        <div class="platform"><span>公众号</span></div>
+      </div>
+    </a>
+
+    <a href="#" class="knowledge-card">
+      <span class="kc-tag kct-emerald">设计方法</span>
+      <h4>从 MCU 到 AI 加速器：芯片设计方法学演进</h4>
+      <p>回顾二十年来芯片设计方法学的变迁：从传统 RTL 设计到基于 Chiplet 的异构集成，以及 AI 驱动的 EDA 工具趋势。</p>
+      <div class="kc-foot">
+        <span>2026-05-15</span>
+        <div class="platform"><span>公众号</span><span>B站</span><span>小红书</span></div>
+      </div>
+    </a>
+
+    <a href="/EDA-book-video.html" class="knowledge-card">
+      <span class="kc-tag kct-rose">书籍配套</span>
+      <h4>EDA 封装验证实战 · 宣传视频</h4>
+      <p>四本书的视频宣传片——看老李亲述二十年踩坑经验如何凝练为这套实战丛书。</p>
+      <div class="kc-foot">
+        <span>2026-05-01</span>
+        <div class="platform"><span>B站</span></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ── Social Media ── -->
+<section id="social" class="social-section scroll-pad">
+  <div class="section">
+    <div class="section-header-centered">
+      <h2 class="section-title">关注我</h2>
+      <p class="section-subtitle">多平台同步更新，随时随地获取芯片行业实战干货</p>
+    </div>
+
+    <div class="social-grid">
+      <div class="social-card">
+        <div class="sc-icon sc-icon-wechat">&#128172;</div>
+        <h4>微信公众号</h4>
+        <p>首发深度技术文章，每周更新<br>行业趋势解读 + 实战案例分析 + 答疑互动</p>
+        <div class="sc-id">芯片专家老李Ai</div>
+      </div>
+
+      <div class="social-card">
+        <div class="sc-icon sc-icon-bilibili">&#9654;</div>
+        <h4>Bilibili</h4>
+        <p>视频版技术分享<br>EDA 工具操作演示 + 封装设计流程 + 案例实战讲解</p>
+        <div class="sc-id">芯片专家老李Ai</div>
+      </div>
+
+      <div class="social-card">
+        <div class="sc-icon sc-icon-xhs">&#128248;</div>
+        <h4>小红书</h4>
+        <p>图文并茂的知识卡片<br>芯片科普 + 封装知识 + EDA 小技巧 + 行业见闻</p>
+        <div class="sc-id">芯片专家老李Ai</div>
+      </div>
+    </div>
+
+    <div class="subscribe-bar">
+      <div class="sb-text">
+        <span>&#128231; 订阅 <strong>芯片专家老李Ai</strong> 知识邮件，第一时间获取新书发布、技术文章更新与行业动态</span>
+      </div>
+      <div class="sb-input">
+        <input type="email" placeholder="输入邮箱地址...">
+        <button onclick="alert('订阅功能即将上线，敬请期待！')">订阅</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Contact ── -->
+<section id="contact" class="section scroll-pad fade-in">
+  <h2 class="section-title">联系我</h2>
+  <p class="section-subtitle">技术交流 · 书籍咨询 · 企业培训 · 项目合作</p>
+
+  <div class="contact-wrap">
+    <div class="contact-info">
+      <h3>联系方式</h3>
+      <p>无论是技术问题探讨、书籍购买咨询，还是企业内训与项目合作，都欢迎联系。</p>
+
+      <div class="contact-item">
+        <div class="ci-icon" style="background:rgba(7,193,96,0.1);color:#07c160;">&#128172;</div>
+        <span>微信公众号：芯片专家老李Ai</span>
+      </div>
+
+      <div class="contact-item">
+        <div class="ci-icon" style="background:rgba(59,130,246,0.1);color:var(--blue);">&#9993;</div>
+        <span>邮箱：laoli@chipsage.com</span>
+      </div>
+
+      <div class="contact-item">
+        <div class="ci-icon" style="background:rgba(245,158,11,0.1);color:var(--amber);">&#128222;</div>
+        <span>商务合作：请通过公众号留言或发送邮件</span>
+      </div>
+
+      <div style="margin-top:24px;padding:20px 24px;background:var(--slate-50);border-radius:var(--radius-sm);">
+        <p style="font-size:0.85rem;color:var(--slate-600);line-height:1.7;margin:0;">
+          <strong style="color:var(--slate-800);">企业培训服务：</strong><br>
+          提供 EDA 封装验证、先进封装设计、芯片可靠性工程等主题的企业内训课程，支持线上线下结合。可定制化课程内容，匹配团队实际需求。
+        </p>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <h3>给我留言</h3>
+      <div class="form-group">
+        <label>姓名</label>
+        <input type="text" placeholder="您的姓名">
+      </div>
+      <div class="form-group">
+        <label>邮箱</label>
+        <input type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>主题</label>
+        <input type="text" placeholder="想聊什么？">
+      </div>
+      <div class="form-group">
+        <label>留言</label>
+        <textarea placeholder="写下您的想法..."></textarea>
+      </div>
+      <button class="submit-btn" onclick="alert('消息已发送（演示页面）—— 正式上线后将通过后端处理')">发送留言</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="social-mini">
+    <a href="#" title="微信公众号">&#128172;</a>
+    <a href="#" title="Bilibili">&#9654;</a>
+    <a href="#" title="小红书">&#128248;</a>
+    <a href="#" title="邮箱">&#9993;</a>
+  </div>
+  <div class="footer-links">
+    <a href="#home">首页</a>
+    <a href="#about">关于我</a>
+    <a href="#books">系列丛书</a>
+    <a href="#knowledge">知识库</a>
+    <a href="#social">关注我</a>
+    <a href="#contact">联系</a>
+    <a href="/四本书系列介绍.html">书籍详情</a>
+  </div>
+  <div class="copyright">芯片专家老李Ai &middot; &copy; 2026 All Rights Reserved</div>
+</footer>
+
+<script>
+  const sections = document.querySelectorAll('.scroll-pad, .hero');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id || 'home';
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => {
+      document.querySelector('.nav-links').classList.remove('open');
+    });
+  });
+
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.15 });
+  fadeEls.forEach(el => fadeObserver.observe(el));
+</script>
+
+</body>
+</html>

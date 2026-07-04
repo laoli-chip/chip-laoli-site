@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>芯片封装工艺流程</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #e8ecf1 0%, #d5dce6 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+  }
+
+  .container {
+    max-width: 520px;
+    width: 100%;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .header::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #1a73e8, #0d47a1);
+    border-radius: 2px;
+    margin: 20px auto 0;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+  }
+
+  .header .subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 8px;
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+
+  .flow-steps {
+    position: relative;
+    padding-left: 0;
+  }
+
+  .step {
+    position: relative;
+    margin-bottom: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+  }
+
+  .step:nth-child(1) { animation-delay: 0.1s; }
+  .step:nth-child(2) { animation-delay: 0.2s; }
+  .step:nth-child(3) { animation-delay: 0.3s; }
+  .step:nth-child(4) { animation-delay: 0.4s; }
+  .step:nth-child(5) { animation-delay: 0.5s; }
+  .step:nth-child(6) { animation-delay: 0.6s; }
+  .step:nth-child(7) { animation-delay: 0.7s; }
+
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px 20px 20px 68px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    cursor: default;
+    margin-left: 8px;
+  }
+
+  .step-card:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+  }
+
+  .step-number {
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+
+  .step-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 36px;
+    color: #90a4ae;
+    position: relative;
+    z-index: 1;
+    margin-left: 8px;
+    opacity: 0;
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  .step-arrow svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #90a4ae;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .step:nth-child(1) .step-arrow { animation-delay: 0.15s; }
+  .step:nth-child(2) .step-arrow { animation-delay: 0.25s; }
+  .step:nth-child(3) .step-arrow { animation-delay: 0.35s; }
+  .step:nth-child(4) .step-arrow { animation-delay: 0.45s; }
+  .step:nth-child(5) .step-arrow { animation-delay: 0.55s; }
+  .step:nth-child(6) .step-arrow { animation-delay: 0.65s; }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  .step-1 .step-number { background: linear-gradient(135deg, #1a73e8, #0d47a1); }
+  .step-2 .step-number { background: linear-gradient(135deg, #0d47a1, #1565c0); }
+  .step-3 .step-number { background: linear-gradient(135deg, #1565c0, #1976d2); }
+  .step-4 .step-number { background: linear-gradient(135deg, #1976d2, #2196f3); }
+  .step-5 .step-number { background: linear-gradient(135deg, #2196f3, #42a5f5); }
+  .step-6 .step-number { background: linear-gradient(135deg, #42a5f5, #64b5f6); }
+  .step-7 .step-number { background: linear-gradient(135deg, #64b5f6, #90caf9); color: #1a237e; }
+
+  .step-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a2e;
+    line-height: 1.3;
+  }
+
+  .step-name-en {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: #4b5563;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 12px;
+    color: #9ca3af;
+    letter-spacing: 0.5px;
+  }
+
+  .footer .chip-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 24px 12px 60px; }
+    .header h1 { font-size: 22px; }
+    .step-card { padding: 16px 16px 16px 60px; }
+    .step-number { width: 36px; height: 36px; left: -14px; font-size: 14px; }
+    .step-name { font-size: 15px; }
+    .step-desc { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>芯片封装工艺流程图</h1>
+    <p class="subtitle">Semiconductor Packaging Process Flow</p>
+  </div>
+
+  <div class="flow-steps">
+
+    <div class="step step-1">
+      <div class="step-card">
+        <div class="step-number">①</div>
+        <div class="step-name">晶圆切割</div>
+        <div class="step-name-en">Wafer Dicing</div>
+        <div class="step-desc">将完成前道工艺的晶圆切割成独立的芯片单元（Die）</div>
+      </div>
+      <div class="step-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+
+    <div class="step step-2">
+      <div class="step-card">
+        <div class="step-number">②</div>
+        <div class="step-name">芯片贴装</div>
+        <div class="step-name-en">Die Attach / Die Bonding</div>
+        <div class="step-desc">将芯片精确粘贴到引线框架或基板的指定位置</div>
+      </div>
+      <div class="step-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+
+    <div class="step step-3">
+      <div class="step-card">
+        <div class="step-number">③</div>
+        <div class="step-name">引线键合 / 倒装焊</div>
+        <div class="step-name-en">Wire Bonding / Flip Chip</div>
+        <div class="step-desc">用金属引线或焊球连接芯片焊盘与封装引脚，实现电气互联</div>
+      </div>
+      <div class="step-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+
+    <div class="step step-4">
+      <div class="step-card">
+        <div class="step-number">④</div>
+        <div class="step-name">塑封</div>
+        <div class="step-name-en">Molding</div>
+        <div class="step-desc">注入环氧树脂等封装材料，保护芯片免受物理和环境损伤</div>
+      </div>
+      <div class="step-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+
+    <div class="step step-5">
+      <div class="step-card">
+        <div class="step-number">⑤</div>
+        <div class="step-name">打标</div>
+        <div class="step-name-en">Marking</div>
+        <div class="step-desc">在封装表面激光刻印产品型号、批次号、厂商标识等信息</div>
+      </div>
+      <div class="step-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+
+    <div class="step step-6">
+      <div class="step-card">
+        <div class="step-number">⑥</div>
+        <div class="step-name">切割成型</div>
+        <div class="step-name-en">Singulation</div>
+        <div class="step-desc">将完成塑封的器件从框架上切割分离为独立封装体</div>
+      </div>
+      <div class="step-arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </div>
+    </div>
+
+    <div class="step step-7">
+      <div class="step-card">
+        <div class="step-number">⑦</div>
+        <div class="step-name">测试分选</div>
+        <div class="step-name-en">Testing &amp; Sorting</div>
+        <div class="step-desc">进行电性能测试、可靠性筛选，按等级分档包装出货</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="4" width="16" height="16" rx="2"/>
+      <path d="M8 4v16M16 4v16M4 8h16M4 16h16"/>
+      <path d="M10 10h4v4h-4z"/>
+    </svg>
+    Semiconductor Packaging · Simplified Process Flow
+  </div>
+</div>
+
+</body>
+</html>
