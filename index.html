@@ -58,69 +58,12 @@ nav .nav-links a:hover, nav .nav-links a.active { color: #fff; background: rgba(
 /* ── Hero ── */
 .hero {
   padding: 160px 32px 100px; text-align: center;
-  background: linear-gradient(135deg, #0a1628 0%, #0c1e3a 40%, #0a1628 100%);
-  position: relative; overflow: hidden;
+  background: #0a1628; position: relative; overflow: hidden;
 }
-.hero::before {
-  content: ''; position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 900px 500px at 30% 0%, rgba(59,130,246,0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 600px 600px at 80% 100%, rgba(6,182,212,0.03) 0%, transparent 70%);
-}
-.hero-traces {
-  position: absolute; inset: 0; z-index: 0; overflow: hidden;
+#chip-canvas {
+  position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%;
   pointer-events: none;
-}
-.hero-traces svg {
-  width: 100%; height: 100%; opacity: 0.08;
-}
-.trace-line {
-  stroke-dasharray: 200;
-  stroke-dashoffset: 200;
-  animation: drawTrace 4s ease-in-out forwards;
-}
-.trace-line:nth-child(2) { animation-delay: 0.5s; }
-.trace-line:nth-child(3) { animation-delay: 1s; }
-.trace-line:nth-child(4) { animation-delay: 1.5s; }
-.trace-line:nth-child(5) { animation-delay: 2s; }
-.trace-line:nth-child(6) { animation-delay: 2.5s; }
-@keyframes drawTrace {
-  to { stroke-dashoffset: 0; }
-}
-@keyframes chipBreathe {
-  0% { background-position: 0 0; }
-  100% { background-position: 80px 80px; }
-}
-.hero-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 20px; border-radius: 24px;
-  background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2); color: var(--blue-glow);
-  font-size: 0.82rem; font-weight: 600; margin-bottom: 24px;
-}
-.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); display: inline-block; }
-.hero h1 { font-size: 3rem; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 16px; letter-spacing: -0.02em; }
-.hero h1 .highlight { background: linear-gradient(135deg, var(--blue-light), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero-sub { font-size: 1.1rem; color: var(--slate-400); max-width: 660px; margin: 0 auto 36px; line-height: 1.8; }
-.hero-sub strong { color: var(--blue); }
-.hero-cta { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
-.btn-primary, .btn-outline {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 28px; border-radius: 10px;
-  font-weight: 600; font-size: 0.95rem; text-decoration: none;
-  transition: all 0.2s;
-}
-.btn-primary { background: var(--blue-light); color: #fff; box-shadow: 0 2px 12px rgba(59,130,246,0.2); }
-.btn-primary:hover { background: var(--blue); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(59,130,246,0.3); }
-.btn-outline { border: 1px solid rgba(255,255,255,0.15); color: var(--slate-300); background: transparent; }
-.btn-outline:hover { border-color: var(--blue-glow); color: #fff; background: rgba(59,130,246,0.08); }
-.hero-stats { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
-.hero-stat { text-align: center; }
-.hero-stat .num { font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.15; }
-.hero-stat .num span { color: var(--blue-light); }
-.hero-stat .label { font-size: 0.82rem; color: var(--slate-500); margin-top: 2px; }
-
-/* ── Sections ── */
+}/* ── Sections ── */
 .section { max-width: 1100px; margin: 0 auto; padding: 80px 32px; }
 .section-title { font-size: 1.6rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; letter-spacing: -0.01em; }
 .section-desc { font-size: 1rem; color: var(--slate-500); max-width: 640px; margin-bottom: 48px; line-height: 1.7; }
@@ -157,15 +100,8 @@ nav .nav-links a:hover, nav .nav-links a.active { color: #fff; background: rgba(
 
 /* ── Books ── */
 .section-alt { background: #fff; position: relative; overflow: hidden; }
-.section-alt::before {
-  content: '';
-  position: absolute; inset: 0; z-index: 0; opacity: 0.02;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-size: 60px 60px;
-  animation: chipBreathe2 30s linear infinite;
-}
-@keyframes chipBreathe2 {
-  0% { background-position: 0 0; }
+
+
   100% { background-position: 120px 120px; }
 }
 .section-alt > * { position: relative; z-index: 1; }
@@ -314,19 +250,7 @@ footer .copy { font-size: 0.78rem; color: var(--slate-500); }
   </ul>
 </nav>
 
-<!-- ── Hero ── -->
-<section id="home" class="hero">
-  <div class="hero-content">
-    <div class="hero-badge"><span class="dot"></span> 20 年半导体行业实战沉淀</div>
-    <h1>芯片专家 <span class="highlight">老李Ai</span></h1>
-    <p class="hero-sub">
-      从 0.13&mu;m 到 3nm，从单芯片到 Chiplet 堆叠<br>
-      二十年踩坑经验凝练为 <strong>五本实战指南</strong>，覆盖芯片全生命周期工程闭环
-    </p>
-    <div class="hero-cta">
-      <a href="#books" class="btn-primary">📚 浏览系列丛书</a>
-      <a href="#about" class="btn-outline">了解作者 →</a>
-    </div>
+
     <div class="hero-stats">
       <div class="hero-stat"><div class="num"><span>5</span></div><div class="label">本系列丛书</div></div>
       <div class="hero-stat"><div class="num"><span>99</span>+</div><div class="label">章实战内容</div></div>
@@ -590,6 +514,39 @@ const fadeObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){var c=document.getElementById('chip-canvas');if(!c)return;
+var s=new THREE.Scene(),a=new THREE.PerspectiveCamera(60,c.parentElement.offsetWidth/c.parentElement.offsetHeight,0.1,1e3),
+r=new THREE.WebGLRenderer({canvas:c,alpha:true,antialias:true});
+r.setSize(c.parentElement.offsetWidth,c.parentElement.offsetHeight);
+r.setPixelRatio(Math.min(window.devicePixelRatio,2));
+var g=new THREE.BufferGeometry(),p=new Float32Array(9e3),cl=new Float32Array(9e3),cs=5,
+c1=new THREE.Color(0x3b82f6),c2=new THREE.Color(0x06b6d4);
+for(var i=0;i<3e3;i++){var x,y,z;
+if(i<2e3){x=(Math.random()-.5)*cs*2.5;y=(Math.random()-.5)*cs*2.5;z=(Math.random()-.5)*.5}
+else{var an=Math.random()*6.28,ra=cs*(1.5+Math.random()*2);x=Math.cos(an)*ra;y=Math.sin(an)*ra;z=(Math.random()-.5)*1}
+p[i*3]=x;p[i*3+1]=y;p[i*3+2]=z;
+var col=c1.clone().lerp(c2,Math.random());cl[i*3]=col.r;cl[i*3+1]=col.g;cl[i*3+2]=col.b}
+g.setAttribute('position',new THREE.BufferAttribute(p,3));
+g.setAttribute('color',new THREE.BufferAttribute(cl,3));
+var m=new THREE.PointsMaterial({size:0.08,vertexColors:true,transparent:true,opacity:0.5,blending:THREE.AdditiveBlending,depthWrite:false}),
+pt=new THREE.Points(g,m);s.add(pt);
+var og=new THREE.BoxGeometry(cs*1.5,cs*1.5,.3),om=new THREE.LineBasicMaterial({color:0x3b82f6,transparent:true,opacity:0.12}),
+ol=new THREE.LineSegments(new THREE.EdgesGeometry(og),om);s.add(ol);
+var tp=[[-3,-3,0],[3,-3,0],[3,3,0],[-3,3,0],[-3,-3,0],[-2,-2,0],[2,-2,0],[2,2,0],[-2,2,0],[-2,-2,0]];
+var tg=new THREE.BufferGeometry(),tpos=new Float32Array(tp.flat());tg.setAttribute('position',new THREE.BufferAttribute(tpos,3));
+var tl=new THREE.Line(tg,new THREE.LineBasicMaterial({color:0x06b6d4,transparent:true,opacity:0.08}));s.add(tl);
+a.position.z=5.5;
+(function ani(){requestAnimationFrame(ani);
+pt.rotation.y+=0.001;pt.rotation.x=Math.sin(Date.now()*0.0003)*0.05;
+ol.rotation.y+=0.001;ol.rotation.x=Math.sin(Date.now()*0.0003)*0.05;
+tl.rotation.y+=0.001;tl.rotation.x=Math.sin(Date.now()*0.0003)*0.05;
+r.render(s,a)})();
+window.addEventListener('resize',function(){var w=c.parentElement.offsetWidth,h=c.parentElement.offsetHeight;
+a.aspect=w/h;a.updateProjectionMatrix();r.setSize(w,h)})})();
 </script>
 </body>
 </html>
