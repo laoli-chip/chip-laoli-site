@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCM 封装工艺流程 · 控制计划与 PFMEA — 芯片专家老李Ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --blue: #2b6cb0;
+  --blue-light: #3b82f6;
+  --blue-glow: #60a5fa;
+  --teal: #06b6d4;
+  --violet: #8b5cf6;
+  --amber: #f59e0b;
+  --emerald: #10b981;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif; background: #fff; color: var(--slate-800); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px; color: var(--blue-light); text-decoration: none;
+  font-size: 0.85rem; font-weight: 500; margin-bottom: 24px; transition: color 0.2s;
+}
+.back-link:hover { color: var(--blue); }
+
+/* Hero */
+.page-hero {
+  padding: 130px 32px 70px; text-align: center;
+  background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 40%, #0a1628 100%);
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 700px 500px at 20% 25%, rgba(59,130,246,0.06) 0%, transparent 70%),
+              radial-gradient(ellipse 500px 500px at 80% 55%, rgba(6,182,212,0.04) 0%, transparent 70%);
+}
+.page-hero::after {
+  content: ''; position: absolute; inset: 0; opacity: 0.025;
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px),
+                    linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, black 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, black 30%, transparent 70%);
+}
+.page-hero .content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+.page-hero .badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 16px; border-radius: 24px;
+  background: rgba(13,148,136,0.12); border: 1px solid rgba(13,148,136,0.2);
+  color: #5eead4; font-size: 0.78rem; font-weight: 600; margin-bottom: 20px;
+}
+.page-hero h1 { font-size: 2.4rem; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 12px; }
+.page-hero h1 span { background: linear-gradient(135deg, #5eead4, var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.page-hero p { font-size: 1rem; color: var(--slate-400); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+
+/* Sections */
+.section { max-width: 1000px; margin: 0 auto; padding: 64px 32px; }
+.section-title { font-size: 1.4rem; font-weight: 700; color: var(--slate-900); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+.section-desc { font-size: 0.9rem; color: var(--slate-500); margin-bottom: 32px; line-height: 1.7; }
+.section-title .icon { font-size: 1.3rem; }
+
+/* Flow diagram */
+.flow-wrap { overflow-x: auto; padding: 8px 0; }
+.flow {
+  display: flex; align-items: center; gap: 6px; min-width: max-content;
+  padding: 20px 24px; background: var(--slate-50); border-radius: var(--radius);
+  border: 1px solid var(--slate-200);
+}
+.flow-item {
+  padding: 10px 16px; border-radius: var(--radius-sm); text-align: center;
+  font-size: 0.78rem; font-weight: 500; white-space: nowrap;
+  min-width: 80px;
+}
+.flow-arrow { color: var(--slate-300); font-size: 1.1rem; flex-shrink: 0; }
+.fb1 { background: rgba(59,130,246,0.1); color: var(--blue); }
+.fb2 { background: rgba(13,148,136,0.1); color: #0d9488; }
+.fb3 { background: rgba(139,92,246,0.1); color: var(--violet); }
+.fb4 { background: rgba(245,158,11,0.1); color: #d97706; }
+
+/* Info cards */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.info-card {
+  background: #fff; border: 1px solid var(--slate-200); border-radius: var(--radius);
+  padding: 24px; transition: all 0.2s;
+}
+.info-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
+.info-card h3 { font-size: 1rem; font-weight: 700; color: var(--slate-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.info-card h3 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.info-card p { font-size: 0.85rem; color: var(--slate-600); line-height: 1.7; margin-bottom: 10px; }
+.info-card ul { list-style: none; }
+.info-card ul li { font-size: 0.82rem; color: var(--slate-600); padding: 4px 0; padding-left: 16px; position: relative; line-height: 1.6; }
+.info-card ul li::before { content: ''; position: absolute; left: 0; top: 11px; width: 5px; height: 5px; border-radius: 50%; background: var(--slate-300); }
+
+/* Table */
+.table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--slate-200); }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th { background: var(--navy); color: #fff; font-weight: 600; padding: 10px 14px; text-align: left; font-size: 0.78rem; }
+td { padding: 9px 14px; border-bottom: 1px solid var(--slate-100); vertical-align: top; color: var(--slate-600); }
+tr:nth-child(even) td { background: var(--slate-50); }
+tr:last-child td { border-bottom: none; }
+
+/* Relation diagram */
+.rel-diagram {
+  background: linear-gradient(135deg, #f0f4ff, var(--slate-50));
+  border-radius: var(--radius); padding: 32px; text-align: center;
+  border: 1px solid var(--slate-200);
+}
+.rel-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
+.rel-row:last-child { margin-bottom: 0; }
+.rel-box {
+  padding: 16px 28px; border-radius: var(--radius-sm);
+  font-weight: 600; font-size: 0.9rem; min-width: 140px;
+}
+.rel-arrow { color: var(--slate-300); font-size: 1.2rem; }
+.rel1 { background: rgba(59,130,246,0.1); color: var(--blue); border: 1px solid rgba(59,130,246,0.15); }
+.rel2 { background: rgba(13,148,136,0.1); color: #0d9488; border: 1px solid rgba(13,148,136,0.15); }
+.rel3 { background: rgba(245,158,11,0.1); color: #d97706; border: 1px solid rgba(245,158,11,0.15); }
+
+/* Process list */
+.process-steps { counter-reset: step; }
+.process-step {
+  counter-increment: step; display: flex; gap: 16px;
+  padding: 16px 0; border-bottom: 1px solid var(--slate-100);
+}
+.process-step:last-child { border-bottom: none; }
+.process-step .num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+}
+.process-step .body h4 { font-size: 0.9rem; font-weight: 600; color: var(--slate-900); margin-bottom: 2px; }
+.process-step .body p { font-size: 0.82rem; color: var(--slate-500); line-height: 1.6; }
+
+/* Highlight boxes */
+.highlight-box {
+  background: rgba(13,148,136,0.04); border: 1px solid rgba(13,148,136,0.12);
+  border-radius: var(--radius-sm); padding: 18px 22px; margin-top: 16px;
+}
+.highlight-box h4 { font-size: 0.88rem; font-weight: 600; color: #0f766e; margin-bottom: 6px; }
+.highlight-box p { font-size: 0.82rem; color: var(--slate-600); line-height: 1.6; }
+.highlight-box ul { list-style: none; margin-top: 6px; }
+.highlight-box ul li { font-size: 0.8rem; color: var(--slate-600); padding: 3px 0; padding-left: 14px; position: relative; }
+.highlight-box ul li::before { content: '›'; position: absolute; left: 0; color: #0d9488; font-weight: 700; }
+
+footer { background: var(--navy); padding: 28px 32px; text-align: center; }
+footer a { color: var(--slate-400); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+footer a:hover { color: var(--blue-glow); }
+
+@media (max-width: 768px) {
+  .page-hero h1 { font-size: 1.6rem; }
+  .info-grid { grid-template-columns: 1fr; }
+  .rel-row { flex-direction: column; gap: 8px; }
+  .section { padding: 40px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="page-hero">
+  <div class="content">
+    <div class="badge">📦 MCM 封装 · 质量与可靠性</div>
+    <h1>MCM 封装工艺流程<br><span>控制计划与 PFMEA</span></h1>
+    <p>从工艺步骤到风险分析到过程控制——系统级封装制造质量的方法论与实践指南</p>
+  </div>
+</div>
+
+<!-- 1. MCM 工艺流程 -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📋</span> MCM 封装工艺流程</h2>
+  <p class="section-desc">MCM（多芯片模块）的典型工艺流程，从基板制备到密封测试的完整制造路径</p>
+
+  <div class="flow-wrap">
+    <div class="flow">
+      <span class="flow-item fb1">基板制备</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-item fb2">芯片粘接</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-item fb2">电气互连<br><span style="font-size:0.7rem;opacity:0.7;">WB/TAB/FCB</span></span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-item fb3">基板-外壳<br>连接</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-item fb3">密封封装</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-item fb4">测试与<br>可靠性</span>
+    </div>
+  </div>
+
+  <div class="process-steps" style="margin-top:28px;">
+    <div class="process-step">
+      <div class="num">1</div>
+      <div class="body">
+        <h4>基板制备</h4>
+        <p>MCM-L（有机叠层，PCB 工艺）、MCM-C（陶瓷烧制，厚膜工艺）、MCM-D（薄膜沉积，SiO₂/聚酰亚胺介质）三种基板路线选择。完成蚀刻、钻孔、镀铜等基板制造工序。</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="num">2</div>
+      <div class="body">
+        <h4>芯片粘接</h4>
+        <p>使用导电或绝缘胶将芯片粘接至基板，需考虑温度适应性及返修可行性。控制关键参数：胶层厚度、固化温度曲线、粘接强度。</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="num">3</div>
+      <div class="body">
+        <h4>电气互连</h4>
+        <p>三种主流互连方式：WB（引线键合，最通用）、TAB（载带自动键合）、FCB（倒装焊）。根据芯片类型、I/O 数量和散热需求选择。</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="num">4</div>
+      <div class="body">
+        <h4>基板-外壳连接与密封封装</h4>
+        <p>基板与外壳之间采用粘接/焊接/机械固定方式，完成密封封装（塑封或金属封装），保护内部芯片及互连结构。</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="num">5</div>
+      <div class="body">
+        <h4>测试与可靠性验证</h4>
+        <p>包括基板测试（互连导通/阻抗/串扰）、元器件 KGD 确认、组件功能测试，以及温度循环（TC）、高温存储（HTSL）、HAST 等可靠性试验。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. PFMEA -->
+<section class="section" style="background:var(--slate-50);border-top:1px solid var(--slate-200);border-bottom:1px solid var(--slate-200);">
+  <div class="section-title"><span class="icon">🔍</span> PFMEA 过程失效模式与影响分析</div>
+  <p class="section-desc">在 MCM 封装制造中，PFMEA 用于系统识别每个工序的潜在失效模式，评估风险并制定预防措施</p>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3><span class="dot" style="background:#3b82f6;"></span> 分析步骤</h3>
+      <ul>
+        <li>① 确定过程的所有潜在失效模式</li>
+        <li>② 评估失效后果及严重度（S）</li>
+        <li>③ 分析失效的起因/机理（发生度 O）</li>
+        <li>④ 按 S×O×D 计算 RPN，排序优先处理项</li>
+        <li>⑤ 制定预防/探测措施，降低风险（探测度 D）</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h3><span class="dot" style="background:#0d9488;"></span> PFMEA 表单关键字段</h3>
+      <ul>
+        <li>过程/功能要求</li>
+        <li>潜在失效模式</li>
+        <li>严重度（Severity）</li>
+        <li>失效起因/机理</li>
+        <li>现有过程控制（预防+探测）</li>
+        <li>探测度（Detection）</li>
+        <li>RPN = S × O × D</li>
+        <li>建议措施 → 实施结果</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:24px;">
+    <h4>PFMEA 审核关注重点</h4>
+    <ul>
+      <li>PFMEA 分析过程的内在逻辑性是否连贯</li>
+      <li>高风险项（高 RPN）的风险消除措施是否落实到位</li>
+      <li>过程相关文件（作业指导书、控制计划）是否与 PFMEA 对应修正</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3. 控制计划 -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">🎯</span> 控制计划（Control Plan）</h2>
+  <p class="section-desc">控制计划建立在 PFMEA 分析结果之上，将风险控制措施转化为具体的过程管控要求</p>
+
+  <div class="highlight-box" style="margin-bottom:24px;">
+    <h4>编制逻辑</h4>
+    <p><strong>工艺流程 → PFMEA 分析 → 控制计划</strong></p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>要素</th><th>内容说明</th><th>示例（MCM 封装）</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>过程编号/名称</strong></td><td>对应工艺流程的工序</td><td>OP-10 芯片粘接</td></tr>
+        <tr><td><strong>产品特性</strong></td><td>设计参数、尺寸、功能</td><td>粘接层厚度、芯片偏移量</td></tr>
+        <tr><td><strong>过程特性</strong></td><td>工艺参数（温度/时间/速度）</td><td>固化温度、固化时间、压力</td></tr>
+        <tr><td><strong>特殊特性分类</strong></td><td>关键/重要/一般</td><td>粘接强度 → 关键特性（CC）</td></tr>
+        <tr><td><strong>评价/测量技术</strong></td><td>检测工具与方法</td><td>X-ray 检测、剪切力测试</td></tr>
+        <tr><td><strong>样本量/频次</strong></td><td>抽检方案</td><td>首件+每班 5 件</td></tr>
+        <tr><td><strong>控制方法</strong></td><td>人机料法环测</td><td>温度自动记录、SPC 控制图</td></tr>
+        <tr><td><strong>反应计划</strong></td><td>异常处理流程</td><td>隔离-标识-评审-返修</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-grid" style="margin-top:24px;">
+    <div class="info-card">
+      <h3><span class="dot" style="background:#f59e0b;"></span> 人机料法环测控制</h3>
+      <ul>
+        <li><strong>人：</strong>上岗证、技能培训、监督抽查</li>
+        <li><strong>机：</strong>定期保养/校准、运行检查</li>
+        <li><strong>料：</strong>来料检测控制、合格证管理</li>
+        <li><strong>法：</strong>工艺文件、作业指导书、工艺纪律检查</li>
+        <li><strong>环：</strong>温湿度控制、洁净度监测</li>
+        <li><strong>测：</strong>检测设备校准、量具 R&R</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h3><span class="dot" style="background:#8b5cf6;"></span> 审核关注重点</h3>
+      <ul>
+        <li>产品和过程的特殊特性是否识别完整</li>
+        <li>公差范围与控制方法是否对应</li>
+        <li>控制计划与工艺文件/检验规范是否一致</li>
+        <li>控制计划是否随过程变更及时更新</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 关系图 -->
+<section class="section" style="background:var(--slate-50);border-top:1px solid var(--slate-200);border-bottom:1px solid var(--slate-200);">
+  <h2 class="section-title"><span class="icon">🔗</span> 三者关系</h2>
+  <p class="section-desc">MCM 工艺流程、PFMEA、控制计划之间的关系，形成从过程定义到风险控制到执行管控的完整闭环</p>
+
+  <div class="rel-diagram">
+    <div class="rel-row">
+      <div class="rel-box rel1">📋 MCM 工艺流程</div>
+      <span class="rel-arrow">⬇</span>
+      <div class="rel-box rel2">🔍 PFMEA 分析</div>
+      <span class="rel-arrow">⬇</span>
+      <div class="rel-box rel3">🎯 控制计划</div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--slate-500);margin-top:12px;line-height:1.7;">
+      <strong style="color:var(--blue);">工艺流程</strong> 确定工序步骤 →
+      <strong style="color:#0d9488;">PFMEA</strong> 识别工序潜在失效、风险排序、制定预防措施 →
+      <strong style="color:#d97706;">控制计划</strong> 将 PFMEA 结果转化为具体控制方法、频次、反应计划
+    </div>
+  </div>
+
+  <div class="info-grid" style="margin-top:24px;">
+    <div class="info-card">
+      <h3><span class="dot" style="background:#0d9488;"></span> 三者核心逻辑</h3>
+      <p>每个工艺流程步骤都需要 PFMEA 分析来识别潜在失效，PFMEA 的高风险项必须落实到控制计划中。三个文档必须保持同步更新，任何工艺流程变更都要触发 PFMEA 和控制计划的重新评审。</p>
+    </div>
+    <div class="info-card">
+      <h3><span class="dot" style="background:#d97706;"></span> 工程应用建议</h3>
+      <p>建议在 MCM 产品开发初期即建立 PFMEA 团队（跨功能小组），同步开展工艺流程设计。控制计划作为生产现场的质量纲领性文件，应由工艺工程师与质量工程师联合编制。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. MCM 应用参考 -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📌</span> MCM 封装质量保障体系</h2>
+  <p class="section-desc">在 MCM 封装制造中，完整的质量保障体系需要工艺、PFMEA、控制计划三份文件的协同运作</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+    <div style="padding:20px;border-radius:var(--radius-sm);border:1px solid var(--slate-200);text-align:center;">
+      <div style="font-size:0.75rem;color:var(--blue);font-weight:600;">📋 工艺流程</div>
+      <div style="font-size:0.9rem;font-weight:700;color:var(--slate-900);margin:4px 0;">定义怎么做</div>
+      <div style="font-size:0.75rem;color:var(--slate-500);">过程的基准框架</div>
+    </div>
+    <div style="padding:20px;border-radius:var(--radius-sm);border:1px solid var(--slate-200);text-align:center;">
+      <div style="font-size:0.75rem;color:#0d9488;font-weight:600;">🔍 PFMEA</div>
+      <div style="font-size:0.9rem;font-weight:700;color:var(--slate-900);margin:4px 0;">分析哪里会出问题</div>
+      <div style="font-size:0.75rem;color:var(--slate-500);">风险的识别与预防</div>
+    </div>
+    <div style="padding:20px;border-radius:var(--radius-sm);border:1px solid var(--slate-200);text-align:center;">
+      <div style="font-size:0.75rem;color:#d97706;font-weight:600;">🎯 控制计划</div>
+      <div style="font-size:0.9rem;font-weight:700;color:var(--slate-900);margin:4px 0;">如何确保做对</div>
+      <div style="font-size:0.75rem;color:var(--slate-500);">执行的管控标准</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:32px;padding:20px;background:var(--slate-50);border-radius:var(--radius-sm);border:1px solid var(--slate-200);">
+    <p style="font-size:0.85rem;color:var(--slate-600);line-height:1.7;">
+      <strong>返回主页：</strong>
+      <a href="/" style="color:var(--blue-light);text-decoration:none;">芯片专家老李Ai · 个人知识站</a>
+      &nbsp;|&nbsp;
+      <strong>更多技术内容：</strong>
+      <a href="/#knowledge" style="color:var(--blue-light);text-decoration:none;">知识库</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <a href="/">← 返回首页</a>
+</footer>
+</body>
+</html>
