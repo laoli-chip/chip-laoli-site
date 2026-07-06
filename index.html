@@ -289,13 +289,52 @@ footer .copy { font-size: 0.78rem; color: var(--slate-500); }
 <!-- ── Books ── -->
 <section id="books" class="section section-center scroll-pad fade-in">
   <h2 class="section-title">系列丛书</h2>
-  <p class="section-desc">从通识到系统集成，每本书独立成体系，合在一起覆盖从芯片设计到封测应用的完整知识地图</p>
+  <p class="section-desc">从通识到系统集成，五本书三条路径，覆盖芯片全生命周期工程闭环</p>
+
+  <div style="max-width:800px;margin:0 auto 40px;background:linear-gradient(135deg,#f0f4ff,#f8faff);border-radius:12px;border:1px solid #e2e8f0;padding:28px 32px;text-align:left;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+      <div style="padding:12px 16px;border-radius:8px;background:#fff;border-left:3px solid #3b82f6;">
+        <div style="font-size:0.75rem;color:#3b82f6;font-weight:600;margin-bottom:2px;">📖 通识入门</div>
+        <div style="font-size:0.9rem;font-weight:600;color:#1e293b;">半导体实战</div>
+        <div style="font-size:0.75rem;color:#64748b;">BOOK 01</div>
+      </div>
+      <div style="padding:12px 16px;border-radius:8px;background:#fff;border-left:3px solid #06b6d4;">
+        <div style="font-size:0.75rem;color:#06b6d4;font-weight:600;margin-bottom:2px;">🎯 设计方法</div>
+        <div style="font-size:0.9rem;font-weight:600;color:#1e293b;">先进封装设计实战</div>
+        <div style="font-size:0.75rem;color:#64748b;">BOOK 02</div>
+      </div>
+      <div style="padding:12px 16px;border-radius:8px;background:#fff;border-left:3px solid #8b5cf6;">
+        <div style="font-size:0.75rem;color:#8b5cf6;font-weight:600;margin-bottom:2px;">🔧 工具实战</div>
+        <div style="font-size:0.9rem;font-weight:600;color:#1e293b;">EDA 封装验证实战</div>
+        <div style="font-size:0.75rem;color:#64748b;">BOOK 03</div>
+      </div>
+      <div style="padding:12px 16px;border-radius:8px;background:#fff;border-left:3px solid #0d9488;">
+        <div style="font-size:0.75rem;color:#0d9488;font-weight:600;margin-bottom:2px;">⚡ 系统集成 A</div>
+        <div style="font-size:0.9rem;font-weight:600;color:#1e293b;">MCM 多芯片封装</div>
+        <div style="font-size:0.75rem;color:#64748b;">BOOK 04</div>
+      </div>
+      <div style="padding:12px 16px;border-radius:8px;background:#fff;border-left:3px solid #dc2626;">
+        <div style="font-size:0.75rem;color:#dc2626;font-weight:600;margin-bottom:2px;">⚡ 系统集成 B</div>
+        <div style="font-size:0.9rem;font-weight:600;color:#1e293b;">SiP 系统级封装</div>
+        <div style="font-size:0.75rem;color:#64748b;">BOOK 05</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:12px 16px;border-radius:8px;background:#fff;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span style="font-size:0.8rem;font-weight:600;color:#475569;">推荐学习路径：</span>
+      <span style="font-size:0.78rem;padding:4px 12px;border-radius:20px;background:rgba(59,130,246,0.1);color:#3b82f6;">01 通识 → 02 方法 → 03 工具</span>
+      <span style="color:#94a3b8;font-size:0.7rem;">或</span>
+      <span style="font-size:0.78rem;padding:4px 12px;border-radius:20px;background:rgba(13,148,136,0.1);color:#0d9488;">04 MCM</span>
+      <span style="font-size:0.78rem;padding:4px 12px;border-radius:20px;background:rgba(220,38,38,0.1);color:#dc2626;">05 SiP</span>
+      <span style="font-size:0.72rem;color:#94a3b8;">（可根据需求直接选择系统集成方向）</span>
+    </div>
+  </div>
+
   <div class="books-grid">
     <div class="bcard">
       <div class="bcard-top">
         <div class="bnum bnum-1">1</div>
         <h3>半导体实战：从设计到应用全流程指南</h3>
-        <div class="bsub">芯片全生命周期通识 · 18章+4附录</div>
+        <div class="bsub" style="color:#3b82f6;">📖 芯片全生命周期通识 · 18章+4附录</div>
         <div class="bdesc">从架构定义到客户应用，打通产业链上下游知识盲区。适合所有刚入行的芯片从业者。</div>
         <div class="btools"><span>产业链全景</span><span>RTL 设计</span><span>物理实现</span><span>封装体系</span><span>测试验证</span></div>
       </div>
@@ -307,7 +346,7 @@ footer .copy { font-size: 0.78rem; color: var(--slate-500); }
       <div class="bcard-top">
         <div class="bnum bnum-2">2</div>
         <h3>先进封装设计实战：基于 Cadence 的 2.5D/3D IC 设计全流程</h3>
-        <div class="bsub">封装设计方法论 · 25章+3附录</div>
+        <div class="bsub" style="color:#06b6d4;">🎯 封装设计方法论 · 25章+3附录</div>
         <div class="bdesc">不讲菜单操作，讲设计决策思维。从封装选型到 2.5D/3D IC 完整流程，构建系统化知识体系。</div>
         <div class="btools"><span>APD</span><span>2.5D</span><span>3D Stack</span><span>Chiplet</span><span>UCIe</span><span>SI/PI</span></div>
       </div>
@@ -319,7 +358,7 @@ footer .copy { font-size: 0.78rem; color: var(--slate-500); }
       <div class="bcard-top">
         <div class="bnum bnum-3">3</div>
         <h3>EDA 封装验证实战 — Innovator3D IC + Calibre 通用验证平台</h3>
-        <div class="bsub" style="color:#8b5cf6;">双工具链 · 52章+12附录</div>
+        <div class="bsub" style="color:#8b5cf6;">🔧 双工具链 · 52章+12附录</div>
         <div class="bdesc">业界首本同时覆盖 Siemens + Cadence 双工具链的封装验证手册。四个真实案例，一套方法掌控两大平台。</div>
         <div class="btools"><span>Innovator3D</span><span>Calibre</span><span>Xpedition</span><span>PVS</span><span>Sigrity</span></div>
       </div>
@@ -331,7 +370,7 @@ footer .copy { font-size: 0.78rem; color: var(--slate-500); }
       <div class="bcard-top">
         <div class="bnum bnum-4">4</div>
         <h3>MCM 多芯片封装设计与仿真操作手册</h3>
-        <div class="bsub" style="color:#0d9488;">系统集成 · 22章+5附录</div>
+        <div class="bsub" style="color:#0d9488;">⚡ 系统集成 · 22章+5附录</div>
         <div class="bdesc">MCM 在成本、性能和集成度之间提供灵活平衡。从设计方法到仿真验证的全流程实操指南。</div>
         <div class="btools"><span>基板设计</span><span>高密度布线</span><span>SI/PI</span><span>热仿真</span><span>可靠性</span></div>
       </div>
@@ -343,7 +382,7 @@ footer .copy { font-size: 0.78rem; color: var(--slate-500); }
       <div class="bcard-top">
         <div class="bnum bnum-5">5</div>
         <h3>SiP 系统级封装设计仿真操作手册</h3>
-        <div class="bsub" style="color:#dc2626;">系统集成 · 26章+5附录</div>
+        <div class="bsub" style="color:#dc2626;">⚡ 系统集成 · 26章+5附录</div>
         <div class="bdesc">多颗异构芯片集成到单一封装的全流程方法。架构/基板/中介层/TSV/多物理场/DFM 全覆盖。</div>
         <div class="btools"><span>中介层/TSV</span><span>多物理场</span><span>高速接口</span><span>DFM</span><span>量产交付</span></div>
       </div>
@@ -352,13 +391,7 @@ footer .copy { font-size: 0.78rem; color: var(--slate-500); }
       </div>
     </div>
   </div>
-  <div style="margin-top:36px;">
-    <a href="/五本书知识关系图.pdf" class="btn-outline" style="border-color:var(--slate-300);color:var(--slate-600);">📊 查看五本书知识关系图</a>
-  </div>
-</section>
-
-<!-- ── About ── -->
-<section id="about" class="section scroll-pad fade-in">
+</section><section id="about" class="section scroll-pad fade-in">
   <h2 class="section-title">关于我</h2>
   <p class="section-desc">从一线工程师到知识分享者，二十年只做一件事——把芯片做好</p>
   <div class="about-grid">
