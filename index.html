@@ -58,11 +58,28 @@ nav .nav-links a:hover, nav .nav-links a.active { color: #fff; background: rgba(
 /* ── Hero ── */
 .hero {
   padding: 160px 32px 100px; text-align: center;
-  background: #0a1628; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #0a1628 0%, #0c1e3a 40%, #0a1628 100%);
+  position: relative; overflow: hidden;
 }
-#chip-canvas {
-  position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%;
-  pointer-events: none;
+.hero::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 0; opacity: 0.04;
+  background-image:
+    linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px),
+    linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridMove 30s linear infinite;
+}
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 80px 80px; }
+}
+.hero::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 0; opacity: 0.06;
+  background:
+    radial-gradient(ellipse 800px 500px at 20% 30%, rgba(59,130,246,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 600px at 80% 60%, rgba(6,182,212,0.05) 0%, transparent 70%);
 }/* ── Sections ── */
 .section { max-width: 1100px; margin: 0 auto; padding: 80px 32px; }
 .section-title { font-size: 1.6rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; letter-spacing: -0.01em; }
@@ -100,6 +117,15 @@ nav .nav-links a:hover, nav .nav-links a.active { color: #fff; background: rgba(
 
 /* ── Books ── */
 .section-alt { background: #fff; position: relative; overflow: hidden; }
+.section-alt::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; opacity: 0.015;
+  background-image:
+    linear-gradient(90deg, rgba(59,130,246,0.5) 1px, transparent 1px),
+    linear-gradient(rgba(59,130,246,0.5) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+.section-alt > * { position: relative; z-index: 1; }
 
 
   100% { background-position: 120px 120px; }
@@ -516,37 +542,8 @@ const fadeObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
-(function(){var c=document.getElementById('chip-canvas');if(!c)return;
-var s=new THREE.Scene(),a=new THREE.PerspectiveCamera(60,c.parentElement.offsetWidth/c.parentElement.offsetHeight,0.1,1e3),
-r=new THREE.WebGLRenderer({canvas:c,alpha:true,antialias:true});
-r.setSize(c.parentElement.offsetWidth,c.parentElement.offsetHeight);
-r.setPixelRatio(Math.min(window.devicePixelRatio,2));
-var g=new THREE.BufferGeometry(),p=new Float32Array(9e3),cl=new Float32Array(9e3),cs=5,
-c1=new THREE.Color(0x3b82f6),c2=new THREE.Color(0x06b6d4);
-for(var i=0;i<3e3;i++){var x,y,z;
-if(i<2e3){x=(Math.random()-.5)*cs*2.5;y=(Math.random()-.5)*cs*2.5;z=(Math.random()-.5)*.5}
-else{var an=Math.random()*6.28,ra=cs*(1.5+Math.random()*2);x=Math.cos(an)*ra;y=Math.sin(an)*ra;z=(Math.random()-.5)*1}
-p[i*3]=x;p[i*3+1]=y;p[i*3+2]=z;
-var col=c1.clone().lerp(c2,Math.random());cl[i*3]=col.r;cl[i*3+1]=col.g;cl[i*3+2]=col.b}
-g.setAttribute('position',new THREE.BufferAttribute(p,3));
-g.setAttribute('color',new THREE.BufferAttribute(cl,3));
-var m=new THREE.PointsMaterial({size:0.08,vertexColors:true,transparent:true,opacity:0.5,blending:THREE.AdditiveBlending,depthWrite:false}),
-pt=new THREE.Points(g,m);s.add(pt);
-var og=new THREE.BoxGeometry(cs*1.5,cs*1.5,.3),om=new THREE.LineBasicMaterial({color:0x3b82f6,transparent:true,opacity:0.12}),
-ol=new THREE.LineSegments(new THREE.EdgesGeometry(og),om);s.add(ol);
-var tp=[[-3,-3,0],[3,-3,0],[3,3,0],[-3,3,0],[-3,-3,0],[-2,-2,0],[2,-2,0],[2,2,0],[-2,2,0],[-2,-2,0]];
-var tg=new THREE.BufferGeometry(),tpos=new Float32Array(tp.flat());tg.setAttribute('position',new THREE.BufferAttribute(tpos,3));
-var tl=new THREE.Line(tg,new THREE.LineBasicMaterial({color:0x06b6d4,transparent:true,opacity:0.08}));s.add(tl);
-a.position.z=5.5;
-(function ani(){requestAnimationFrame(ani);
-pt.rotation.y+=0.001;pt.rotation.x=Math.sin(Date.now()*0.0003)*0.05;
-ol.rotation.y+=0.001;ol.rotation.x=Math.sin(Date.now()*0.0003)*0.05;
-tl.rotation.y+=0.001;tl.rotation.x=Math.sin(Date.now()*0.0003)*0.05;
-r.render(s,a)})();
-window.addEventListener('resize',function(){var w=c.parentElement.offsetWidth,h=c.parentElement.offsetHeight;
-a.aspect=w/h;a.updateProjectionMatrix();r.setSize(w,h)})})();
-</script>
+
 </body>
 </html>
