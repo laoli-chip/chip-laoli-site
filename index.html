@@ -398,13 +398,41 @@ Fixed: </style> added
       20 年半导体行业实战沉淀
     </div>
     <h1>芯片专家 <span class="highlight">老李Ai</span></h1>
-    <p class="hero-sub">
-      从 0.13&mu;m 到 3nm，从单芯片到 Chiplet 堆叠<br>
-      二十年踩坑经验凝练为五本实战指南，覆盖芯片全生命周期工程闭环
-    </p>
+
+    <!-- Dynamic rotating tech showcase -->
+    <div class="tech-rotator">
+      <div class="rotator-item active" data-idx="0">
+        <div class="rotator-icon">⚙️</div>
+        <div class="rotator-text">从 <strong>0.13&mu;m</strong> 到 <strong>3nm</strong> — 见证摩尔定律每一个节点</div>
+      </div>
+      <div class="rotator-item" data-idx="1">
+        <div class="rotator-icon">🔲</div>
+        <div class="rotator-text">从 <strong>单芯片</strong> 到 <strong>Chiplet 堆叠</strong> — 封装技术革命亲历者</div>
+      </div>
+      <div class="rotator-item" data-idx="2">
+        <div class="rotator-icon">📚</div>
+        <div class="rotator-text">二十年踩坑经验凝练为 <strong>五本实战指南</strong></div>
+      </div>
+      <div class="rotator-item" data-idx="3">
+        <div class="rotator-icon">🔬</div>
+        <div class="rotator-text">覆盖芯片 <strong>全生命周期</strong> 工程闭环 — 设计·制造·封装·测试</div>
+      </div>
+      <div class="rotator-item" data-idx="4">
+        <div class="rotator-icon">🎯</div>
+        <div class="rotator-text"><strong>SiP · MCM · 2.5D/3D · Chiplet · EDA</strong> — 系统级封装全栈方法</div>
+      </div>
+      <div class="rotator-dots">
+        <span class="dot-active" data-idx="0"></span>
+        <span data-idx="1"></span>
+        <span data-idx="2"></span>
+        <span data-idx="3"></span>
+        <span data-idx="4"></span>
+      </div>
+    </div>
+
     <div class="hero-cta">
-      <a href="#books" class="btn-primary">&#128214; 浏览系列丛书</a>
-      <a href="#social" class="btn-outline">&#128279; 关注我的内容</a>
+      <a href="#books" class="btn-primary">📚 浏览系列丛书</a>
+      <a href="#social" class="btn-outline">🔗 关注我的内容</a>
     </div>
     <div class="hero-stats">
       <div class="hero-stat"><div class="num"><span>5</span></div><div class="label">本系列丛书</div></div>
@@ -413,10 +441,7 @@ Fixed: </style> added
       <div class="hero-stat"><div class="num"><span>5</span></div><div class="label">个完整设计案例</div></div>
     </div>
   </div>
-</section>
-
-<!-- ── About ── -->
-<section id="books" class="section section-alt scroll-pad fade-in">
+</section><section id="books" class="section section-alt scroll-pad fade-in">
   <div class="section-header-centered">
     <h2 class="section-title">系列丛书</h2>
     <p class="section-subtitle">五本书，从通识到系统集成，一条完整的芯片实战路径。每本书独立成体系，合在一起覆盖从芯片设计到封测应用的完整知识地图</p>
@@ -776,9 +801,64 @@ Fixed: </style> added
     entries.forEach(entry => {
       if (entry.isIntersecting) { entry.target.classList.add('visible'); }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.15 
+  /* ── Tech Rotator ── */
+  .tech-rotator {
+    max-width: 680px; margin: 0 auto 36px; min-height: 80px;
+    position: relative;
+  }
+  .rotator-item {
+    display: none; align-items: center; gap: 12px;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(59,130,246,0.1);
+    border-radius: 12px;
+    animation: fadeInRotate 0.6s ease-out;
+  }
+  .rotator-item.active { display: flex; }
+  @keyframes fadeInRotate {
+    from { opacity: 0; transform: translateY(10px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .rotator-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .rotator-text { font-size: 1rem; color: var(--slate-300); line-height: 1.7; text-align: left; }
+  .rotator-text strong { color: var(--blue-glow); font-weight: 700; }
+  .rotator-dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+  .rotator-dots span {
+    width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15);
+    cursor: pointer; transition: all 0.3s;
+  }
+  .rotator-dots span.dot-active { background: var(--blue-light); width: 24px; border-radius: 4px; }
+  .rotator-dots span:hover { background: var(--blue-glow); }
+
+});
   fadeEls.forEach(el => fadeObserver.observe(el));
 </script>
 
 </body>
 </html>
+  // ── Tech Rotator ──
+  (function() {
+    const items = document.querySelectorAll('.rotator-item');
+    const dots = document.querySelectorAll('.rotator-dots span');
+    if (!items.length) return;
+    let idx = 0;
+    setInterval(() => {
+      items[idx].classList.remove('active');
+      dots[idx].classList.remove('dot-active');
+      idx = (idx + 1) % items.length;
+      items[idx].classList.add('active');
+      dots[idx].classList.add('dot-active');
+    }, 4000);
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        items[idx].classList.remove('active');
+        dots[idx].classList.remove('dot-active');
+        idx = i;
+        items[idx].classList.add('active');
+        dots[idx].classList.add('dot-active');
+      });
+    });
+  })();
+
+
