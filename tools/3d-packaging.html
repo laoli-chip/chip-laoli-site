@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D 封装结构可视化 — 芯片专家老李Ai</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter','Noto Sans SC',-apple-system,sans-serif;overflow:hidden;background:#0a1628}
+  #app{position:fixed;inset:0;display:flex;flex-direction:column}
+
+  /* 顶部工具栏 */
+  .toolbar{
+    position:absolute;top:0;left:0;right:0;z-index:10;
+    height:56px;display:flex;align-items:center;padding:0 20px;gap:16px;
+    background:rgba(10,22,40,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .toolbar .brand{font-size:.9rem;font-weight:600;color:#fff;margin-right:auto}
+  .toolbar .brand span{color:#60a5fa}
+  .toolbar .back{color:#94a3b8;font-size:.8rem;text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .2s}
+  .toolbar .back:hover{color:#fff}
+  .controls{display:flex;gap:6px;flex-wrap:wrap}
+  .controls button{
+    padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
+    color:#cbd5e1;font-size:.75rem;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap;
+  }
+  .controls button:hover{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)}
+  .controls button.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
+
+  /* 右下侧图例 */
+  .legend{
+    position:absolute;bottom:20px;left:20px;z-index:10;
+    background:rgba(10,22,40,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;padding:14px 18px;color:#fff;
+  }
+  .legend h4{font-size:.72rem;font-weight:600;color:#94a3b8;margin-bottom:6px;letter-spacing:.05em}
+  .legend-item{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.75rem;color:#cbd5e1}
+  .legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+  /* 右下角操作提示 */
+  .hint{
+    position:absolute;bottom:20px;right:20px;z-index:10;
+    background:rgba(10,22,40,.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.06);
+    border-radius:10px;padding:10px 14px;color:#94a3b8;font-size:.7rem;text-align:center;line-height:1.5;
+  }
+
+  #three-container{flex:1;position:relative}
+
+  @media(max-width:768px){
+    .toolbar{padding:0 12px;gap:8px;flex-wrap:wrap;height:auto;padding-top:10px;padding-bottom:10px}
+    .toolbar .brand{font-size:.8rem;width:100%;margin-bottom:4px}
+    .controls button{padding:4px 10px;font-size:.7rem}
+    .legend{bottom:70px;padding:10px 14px}
+    .legend-item{font-size:.7rem}
+    .hint{display:none}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- 顶部栏 -->
+  <div class="toolbar">
+    <a href="/" class="back">← 返回首页</a>
+    <div class="brand">芯片专家<span>老李Ai</span> · 3D 封装可视化</div>
+    <div class="controls" id="presetBtns">
+      <button data-mode="25d" class="active">2.5D Interposer</button>
+      <button data-mode="3dstack">3D 堆叠</button>
+      <button data-mode="chiplet">Chiplet</button>
+    </div>
+    <div class="controls" id="viewBtns">
+      <button id="btnSlice">✂️ 剖面</button>
+      <button id="btnExplode">💥 分解</button>
+      <button id="btnReset">↺ 复位</button>
+    </div>
+  </div>
+
+  <!-- Three.js 画布 -->
+  <div id="three-container"></div>
+
+  <!-- 图例 -->
+  <div class="legend" id="legend">
+    <h4>图 例</h4>
+    <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span>芯片 / Die</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>微凸块 / Micro Bump</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>中介层 / Interposer</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#8b5cf6"></span>TSV</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#64748b"></span>基板 / Substrate</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#06b6d4"></span>BGA 球</div>
+  </div>
+
+  <!-- 提示 -->
+  <div class="hint">🖱 拖拽旋转 · 滚轮缩放<br>右键平移</div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ============= 场景初始化 =============
+const container = document.getElementById('three-container');
+const scene = new THREE.Scene();
+
+// 深空背景渐变
+const bgCanvas = document.createElement('canvas');
+bgCanvas.width = 2; bgCanvas.height = 512;
+const bgCtx = bgCanvas.getContext('2d');
+const grad = bgCtx.createLinearGradient(0,0,0,512);
+grad.addColorStop(0,'#050e1f'); grad.addColorStop(1,'#0a1628');
+bgCtx.fillStyle = grad; bgCtx.fillRect(0,0,2,512);
+const bgTex = new THREE.CanvasTexture(bgCanvas);
+scene.background = bgTex;
+
+const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
+camera.position.set(8, 6, 10);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+container.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 3;
+controls.maxDistance = 25;
+controls.target.set(0, 0.5, 0);
+controls.update();
+
+// ============= 灯光 =============
+const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
+scene.add(ambientLight);
+
+const mainLight = new THREE.DirectionalLight(0xffeedd, 2);
+mainLight.position.set(8, 12, 4);
+mainLight.castShadow = true;
+mainLight.shadow.mapSize.set(1024, 1024);
+scene.add(mainLight);
+
+const fillLight = new THREE.DirectionalLight(0x4488ff, 0.6);
+fillLight.position.set(-4, 6, -6);
+scene.add(fillLight);
+
+const rimLight = new THREE.DirectionalLight(0x88ccff, 0.4);
+rimLight.position.set(0, -2, 8);
+scene.add(rimLight);
+
+// ============= 材料定义 =============
+const materials = {
+  chip:      new THREE.MeshPhysicalMaterial({ color: 0x3b82f6, metalness: 0.2, roughness: 0.3, clearcoat: 0.1, clearcoatRoughness: 0.3 }),
+  chipEdge:  new THREE.MeshPhysicalMaterial({ color: 0x2563eb, metalness: 0.3, roughness: 0.5 }),
+  bump:      new THREE.MeshPhysicalMaterial({ color: 0xf59e0b, metalness: 0.7, roughness: 0.3 }),
+  interposer: new THREE.MeshPhysicalMaterial({ color: 0x10b981, metalness: 0.1, roughness: 0.4, transparent: true, opacity: 0.7 }),
+  tsv:       new THREE.MeshPhysicalMaterial({ color: 0x8b5cf6, metalness: 0.6, roughness: 0.3 }),
+  substrate: new THREE.MeshPhysicalMaterial({ color: 0x64748b, metalness: 0.1, roughness: 0.6 }),
+  bga:       new THREE.MeshPhysicalMaterial({ color: 0x06b6d4, metalness: 0.5, roughness: 0.3 }),
+  rdl:       new THREE.MeshPhysicalMaterial({ color: 0xf472b6, metalness: 0.7, roughness: 0.2 }),
+  underfill: new THREE.MeshPhysicalMaterial({ color: 0x334155, transparent: true, opacity: 0.15, roughness: 0.8 }),
+};
+
+// ============= 组 =============
+const packageGroup = new THREE.Group();
+scene.add(packageGroup);
+
+// ============= 工具函数 =============
+function createChip(w, d, h, color, pos, label='') {
+  const mat = new THREE.MeshPhysicalMaterial({
+    color, metalness: 0.2, roughness: 0.3, clearcoat: 0.1
+  });
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  mesh.position.set(pos.x, pos.y, pos.z);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  mesh.userData = { layer: 'chip', label };
+  return mesh;
+}
+
+function createLayerGroup() {
+  const g = new THREE.Group();
+  g.userData = { visible: true };
+  packageGroup.add(g);
+  return g;
+}
+
+// 存储各层引用以便 toggle
+const layers = { bga: null, substrate: null, interposer: null, bumps: null, chips: null, tsvs: null };
+
+// ============= 构建 2.5D 模型 =============
+function build_25d() {
+  clearPackage();
+
+  // BGA 球阵列
+  const bgaGroup = new THREE.Group();
+  bgaGroup.userData = { layer: 'bga' };
+  const bgaRadius = 0.08;
+  const bgaRows = 11;
+  const bgaCols = 11;
+  const bgaSpacing = 0.35;
+  const bgaOffsetX = (bgaCols - 1) * bgaSpacing / 2;
+  const bgaOffsetZ = (bgaRows - 1) * bgaSpacing / 2;
+  for (let r = 0; r < bgaRows; r++) {
+    for (let c = 0; c < bgaCols; c++) {
+      const ball = new THREE.Mesh(new THREE.SphereGeometry(bgaRadius, 12, 12), materials.bga);
+      const x = c * bgaSpacing - bgaOffsetX;
+      const z = r * bgaSpacing - bgaOffsetZ;
+      ball.position.set(x, -0.75, z);
+      ball.castShadow = true;
+      bgaGroup.add(ball);
+    }
+  }
+  packageGroup.add(bgaGroup);
+  layers.bga = bgaGroup;
+
+  // 基板
+  const subMesh = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.3, 4.2), materials.substrate);
+  subMesh.position.set(0, -0.6, 0);
+  subMesh.castShadow = true;
+  subMesh.receiveShadow = true;
+  subMesh.userData = { layer: 'substrate' };
+  packageGroup.add(subMesh);
+  layers.substrate = subMesh;
+
+  // 中介层
+  const interpMesh = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.25, 3.6), materials.interposer);
+  interpMesh.position.set(0, -0.325, 0);
+  interpMesh.castShadow = true;
+  interpMesh.receiveShadow = true;
+  interpMesh.userData = { layer: 'interposer' };
+  packageGroup.add(interpMesh);
+  layers.interposer = interpMesh;
+
+  // TSV (硅通孔) - 在中介层内部
+  const tsvGroup = new THREE.Group();
+  tsvGroup.userData = { layer: 'tsv' };
+  const tsvPositions = [];
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 6; c++) {
+      const x = (c - 2.5) * 0.55;
+      const z = (r - 2.5) * 0.55;
+      if (Math.abs(x) < 0.4 && Math.abs(z) < 0.4) continue; // 中心留空
+      tsvPositions.push({ x, z });
+    }
+  }
+  tsvPositions.forEach(p => {
+    const tsv = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 0.25, 8), materials.tsv);
+    tsv.position.set(p.x, -0.325, p.z);
+    tsv.castShadow = true;
+    tsvGroup.add(tsv);
+  });
+  packageGroup.add(tsvGroup);
+  layers.tsvs = tsvGroup;
+
+  // 微凸块
+  const bumpGroup = new THREE.Group();
+  bumpGroup.userData = { layer: 'bump' };
+  const bumpPositions = [];
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const x = (c - 3.5) * 0.35;
+      const z = (r - 3.5) * 0.35;
+      if (Math.abs(x) > 1.1 || Math.abs(z) > 1.1) continue;
+      bumpPositions.push({ x, z });
+    }
+  }
+  bumpPositions.forEach(p => {
+    const bump = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 0.06, 8), materials.bump);
+    bump.position.set(p.x, -0.2, p.z);
+    bump.castShadow = true;
+    bumpGroup.add(bump);
+  });
+  packageGroup.add(bumpGroup);
+  layers.bumps = bumpGroup;
+
+  // 芯片（Die）
+  const chipGroup = new THREE.Group();
+  chipGroup.userData = { layer: 'chip' };
+
+  const chipA = createChip(1.4, 1.4, 0.2, 0x3b82f6, { x: -1.0, y: -0.07, z: -0.8 }, 'AI Die');
+  chipGroup.add(chipA);
+  const chipB = createChip(1.4, 1.4, 0.2, 0x2563eb, { x: 1.0, y: -0.07, z: -0.8 }, 'HBM Die');
+  chipGroup.add(chipB);
+  const chipC = createChip(1.4, 1.4, 0.2, 0x1d4ed8, { x: -1.0, y: -0.07, z: 0.8 }, 'I/O Die');
+  chipGroup.add(chipC);
+  const chipD = createChip(1.4, 1.4, 0.2, 0x1e40af, { x: 1.0, y: -0.07, z: 0.8 }, 'HBM Die');
+  chipGroup.add(chipD);
+
+  // Die 上的文字标签用线框装饰
+  [chipA, chipB, chipC, chipD].forEach(chip => {
+    const edge = new THREE.EdgesGeometry(chip.geometry);
+    const line = new THREE.LineSegments(edge, new THREE.LineBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.3 }));
+    line.position.copy(chip.position);
+    chipGroup.add(line);
+  });
+
+  packageGroup.add(chipGroup);
+  layers.chips = chipGroup;
+
+  // 调整颜色以对应图例
+  materials.chip.color.setHex(0x3b82f6);
+  materials.bump.color.setHex(0xf59e0b);
+  materials.interposer.color.setHex(0x10b981);
+  materials.tsv.color.setHex(0x8b5cf6);
+  materials.substrate.color.setHex(0x64748b);
+  materials.bga.color.setHex(0x06b6d4);
+}
+
+// ============= 构建 3D 堆叠 =============
+function build_3dstack() {
+  clearPackage();
+
+  // BGA & 基板（与 2.5D 共享下部结构）
+  const bgaGroup = new THREE.Group();
+  bgaGroup.userData = { layer: 'bga' };
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      const ball = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), materials.bga);
+      const x = (c - 4) * 0.35;
+      const z = (r - 4) * 0.35;
+      ball.position.set(x, -0.7, z);
+      bgaGroup.add(ball);
+    }
+  }
+  packageGroup.add(bgaGroup);
+  layers.bga = bgaGroup;
+
+  const subMesh = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.25, 3.2), materials.substrate);
+  subMesh.position.set(0, -0.55, 0);
+  packageGroup.add(subMesh);
+  layers.substrate = subMesh;
+
+  // 底部 Die
+  const baseDie = createChip(2.2, 2.2, 0.2, 0x3b82f6, { x: 0, y: -0.35, z: 0 }, 'Base Logic');
+
+  // 微凸块
+  const bumpGroup = new THREE.Group();
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 6; c++) {
+      const bump = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 0.05, 6), materials.bump);
+      const x = (c - 2.5) * 0.3;
+      const z = (r - 2.5) * 0.3;
+      bump.position.set(x, -0.225, z);
+      bumpGroup.add(bump);
+    }
+  }
+  packageGroup.add(bumpGroup);
+  layers.bumps = bumpGroup;
+
+  // TSV 穿过底部 Die
+  const tsvGroup = new THREE.Group();
+  const tsvPos = [];
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 4; c++) {
+      const x = (c - 1.5) * 0.4;
+      const z = (r - 1.5) * 0.4;
+      tsvPos.push({ x, z });
+    }
+  }
+  tsvPos.forEach(p => {
+    const tsv = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 0.45, 6), materials.tsv);
+    tsv.position.set(p.x, -0.125, p.z);
+    tsvGroup.add(tsv);
+  });
+  packageGroup.add(tsvGroup);
+  layers.tsvs = tsvGroup;
+
+  // 中介层/间隔层
+  const spacer = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.08, 2.0), materials.interposer);
+  spacer.position.set(0, -0.04, 0);
+  packageGroup.add(spacer);
+  layers.interposer = spacer;
+
+  // 堆叠 Die (3D stacked)
+  const chipGroup = new THREE.Group();
+  chipGroup.add(baseDie);
+
+  const stackColors = [0x2563eb, 0x1d4ed8, 0x1e40af];
+  const stackH = [0.18, 0.16, 0.14];
+  for (let i = 0; i < 3; i++) {
+    const w = 1.6 - i * 0.2;
+    const d = 1.6 - i * 0.2;
+    const y = 0.06 + stackH[0]/2 + stackH.slice(1, i+1).reduce((a,b) => a + b + 0.04, 0);
+    const die = new THREE.Mesh(
+      new THREE.BoxGeometry(w, stackH[i], d),
+      new THREE.MeshPhysicalMaterial({ color: stackColors[i], metalness: 0.2, roughness: 0.3 })
+    );
+    die.position.set(0, y, 0);
+    die.castShadow = true;
+    chipGroup.add(die);
+
+    // 边缘线框
+    const edge = new THREE.EdgesGeometry(die.geometry);
+    const line = new THREE.LineSegments(edge, new THREE.LineBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.3 }));
+    line.position.copy(die.position);
+    chipGroup.add(line);
+  }
+  packageGroup.add(chipGroup);
+  layers.chips = chipGroup;
+
+  // 重置颜色
+  materials.chip.color.setHex(0x3b82f6);
+  materials.bump.color.setHex(0xf59e0b);
+  materials.interposer.color.setHex(0x10b981);
+  materials.tsv.color.setHex(0x8b5cf6);
+  materials.substrate.color.setHex(0x64748b);
+  materials.bga.color.setHex(0x06b6d4);
+}
+
+// ============= 构建 Chiplet =============
+function build_chiplet() {
+  clearPackage();
+
+  // BGA
+  const bgaGroup = new THREE.Group();
+  for (let r = 0; r < 12; r++) {
+    for (let c = 0; c < 12; c++) {
+      const ball = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), materials.bga);
+      const x = (c - 5.5) * 0.32;
+      const z = (r - 5.5) * 0.32;
+      ball.position.set(x, -0.75, z);
+      bgaGroup.add(ball);
+    }
+  }
+  packageGroup.add(bgaGroup);
+  layers.bga = bgaGroup;
+
+  // 基板
+  const subMesh = new THREE.Mesh(new THREE.BoxGeometry(4.0, 0.28, 4.0), materials.substrate);
+  subMesh.position.set(0, -0.58, 0);
+  packageGroup.add(subMesh);
+  layers.substrate = subMesh;
+
+  // 中介层 (更大)
+  const interpMesh = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.2, 3.8), materials.interposer);
+  interpMesh.position.set(0, -0.34, 0);
+  packageGroup.add(interpMesh);
+  layers.interposer = interpMesh;
+
+  // TSV
+  const tsvGroup = new THREE.Group();
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const x = (c - 3.5) * 0.4;
+      const z = (r - 3.5) * 0.4;
+      if (Math.abs(x) < 0.3 && Math.abs(z) < 0.3) continue;
+      const tsv = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.035, 0.2, 6), materials.tsv);
+      tsv.position.set(x, -0.34, z);
+      tsvGroup.add(tsv);
+    }
+  }
+  packageGroup.add(tsvGroup);
+  layers.tsvs = tsvGroup;
+
+  // 微凸块
+  const bumpGroup = new THREE.Group();
+  for (let r = 0; r < 10; r++) {
+    for (let c = 0; c < 10; c++) {
+      const x = (c - 4.5) * 0.3;
+      const z = (r - 4.5) * 0.3;
+      if (Math.abs(x) > 1.6 || Math.abs(z) > 1.6) continue;
+      const bump = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.027, 0.05, 6), materials.bump);
+      bump.position.set(x, -0.22, z);
+      bumpGroup.add(bump);
+    }
+  }
+  packageGroup.add(bumpGroup);
+  layers.bumps = bumpGroup;
+
+  // 多个 Chiplet Die
+  const chipGroup = new THREE.Group();
+  const chipColors = [0x3b82f6, 0x2563eb, 0x1d4ed8, 0x60a5fa, 0x7c3aed];
+  const chipData = [
+    { w:1.2, d:1.6, x:-1.3, z:0.6, label:'AI Core' },
+    { w:1.2, d:1.6, x:1.3, z:0.6, label:'AI Core' },
+    { w:1.2, d:1.2, x:-1.3, z:-0.8, label:'I/O Die' },
+    { w:1.2, d:1.2, x:1.3, z:-0.8, label:'I/O Die' },
+    { w:0.8, d:0.8, x:0, z:0, label:'Ctrl Die' },
+  ];
+  chipData.forEach((cd, i) => {
+    const die = createChip(cd.w, cd.d, 0.18, chipColors[i % chipColors.length], { x: cd.x, y: -0.11, z: cd.z }, cd.label);
+    chipGroup.add(die);
+    const edge = new THREE.EdgesGeometry(die.geometry);
+    const line = new THREE.LineSegments(edge, new THREE.LineBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.3 }));
+    line.position.copy(die.position);
+    chipGroup.add(line);
+  });
+  packageGroup.add(chipGroup);
+  layers.chips = chipGroup;
+
+  materials.chip.color.setHex(0x3b82f6);
+  materials.bump.color.setHex(0xf59e0b);
+  materials.interposer.color.setHex(0x10b981);
+  materials.tsv.color.setHex(0x8b5cf6);
+  materials.substrate.color.setHex(0x64748b);
+  materials.bga.color.setHex(0x06b6d4);
+}
+
+// ============= 清除场景 =============
+function clearPackage() {
+  while (packageGroup.children.length) {
+    const child = packageGroup.children[0];
+    packageGroup.remove(child);
+    disposeObject(child);
+  }
+  layers.bga = layers.substrate = layers.interposer = layers.bumps = layers.chips = layers.tsvs = null;
+}
+
+function disposeObject(obj) {
+  if (obj.geometry) obj.geometry.dispose();
+  if (obj.material) {
+    if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
+    else obj.material.dispose();
+  }
+  if (obj.children) {
+    for (let i = obj.children.length - 1; i >= 0; i--) {
+      disposeObject(obj.children[i]);
+    }
+  }
+}
+
+// ============= 剖面模式（裁剪平面） =============
+renderer.localClippingEnabled = true;
+
+// 存储所有需要裁剪的材质
+const clipMaterials = [];
+
+// 用于剖面裁剪的平面
+const slicePlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
+let sliceActive = false;
+
+function gatherClipMaterials(obj) {
+  if (obj.material) {
+    if (Array.isArray(obj.material)) {
+      obj.material.forEach(m => { if (!clipMaterials.includes(m)) clipMaterials.push(m); });
+    } else {
+      if (!clipMaterials.includes(obj.material)) clipMaterials.push(obj.material);
+    }
+  }
+  if (obj.children) {
+    obj.children.forEach(gatherClipMaterials);
+  }
+}
+
+function toggleSlice() {
+  sliceActive = !sliceActive;
+  if (sliceActive) {
+    clipMaterials.length = 0;
+    packageGroup.children.forEach(gatherClipMaterials);
+    clipMaterials.forEach(mat => {
+      mat.clippingPlanes = [slicePlane];
+      mat.clipShadows = true;
+      mat.needsUpdate = true;
+    });
+  } else {
+    clipMaterials.forEach(mat => {
+      mat.clippingPlanes = [];
+      mat.needsUpdate = true;
+    });
+  }
+}
+
+// ============= 分解模式 =============
+let explodeActive = false;
+const origPositions = new Map();
+
+function toggleExplode() {
+  explodeActive = !explodeActive;
+  if (explodeActive) {
+    origPositions.clear();
+    packageGroup.children.forEach(child => {
+      if (!child.userData.layer) return;
+      origPositions.set(child.uuid, child.position.y);
+      const layer = child.userData.layer;
+      if (layer === 'bga')      child.position.y += 0.0;
+      else if (layer === 'substrate')  child.position.y += 0.3;
+      else if (layer === 'interposer') child.position.y += 0.6;
+      else if (layer === 'tsv')        child.position.y += 0.6;
+      else if (layer === 'bump')       child.position.y += 0.9;
+      else if (layer === 'chip')       child.position.y += 1.2;
+    });
+  } else {
+    origPositions.forEach((origY, uuid) => {
+      const child = packageGroup.getObjectByProperty('uuid', uuid);
+      if (child) child.position.y = origY;
+    });
+    origPositions.clear();
+  }
+}
+
+// ============= 模式切换 =============
+let currentMode = '25d';
+
+function setMode(mode) {
+  currentMode = mode;
+  if (mode === '25d') build_25d();
+  else if (mode === '3dstack') build_3dstack();
+  else if (mode === 'chiplet') build_chiplet();
+
+  // 复位分解/剖面状态
+  explodeActive = false;
+  sliceActive = false;
+  document.getElementById('btnSlice').classList.remove('active');
+  document.getElementById('btnExplode').classList.remove('active');
+
+  // 清除所有材质上的裁剪平面
+  clipMaterials.length = 0;
+  packageGroup.children.forEach(gatherClipMaterials);
+  clipMaterials.forEach(mat => {
+    mat.clippingPlanes = [];
+    mat.needsUpdate = true;
+  });
+  clipMaterials.length = 0;
+
+  // 更新图例
+  const legendLabels = {
+    '25d': ['芯片 / Die', '微凸块 / Micro Bump', '中介层 / Interposer', 'TSV', '基板 / Substrate', 'BGA 球'],
+    '3dstack': ['堆叠 Die', '微凸块 / Micro Bump', '间隔层', 'TSV', '基板 / Substrate', 'BGA 球'],
+    'chiplet': ['Chiplet Die', '微凸块 / Micro Bump', '中介层 / Interposer', 'TSV', '基板 / Substrate', 'BGA 球'],
+  };
+  const items = document.querySelectorAll('.legend-item');
+  const labels = legendLabels[mode] || legendLabels['25d'];
+  items.forEach((el, i) => { if (i < labels.length) el.childNodes[2].textContent = labels[i]; });
+}
+
+// ============= 事件绑定 =============
+// 预设切换
+document.querySelectorAll('#presetBtns button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#presetBtns button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    setMode(btn.dataset.mode);
+  });
+});
+
+// 剖面
+document.getElementById('btnSlice').addEventListener('click', function() {
+  this.classList.toggle('active');
+  toggleSlice();
+});
+
+// 分解
+document.getElementById('btnExplode').addEventListener('click', function() {
+  this.classList.toggle('active');
+  toggleExplode();
+});
+
+// 复位
+document.getElementById('btnReset').addEventListener('click', () => {
+  camera.position.set(8, 6, 10);
+  controls.target.set(0, 0.5, 0);
+  controls.update();
+  if (explodeActive) toggleExplode();
+  if (sliceActive) toggleSlice();
+  document.getElementById('btnSlice').classList.remove('active');
+  document.getElementById('btnExplode').classList.remove('active');
+});
+
+// ============= 窗口自适应 =============
+window.addEventListener('resize', () => {
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+});
+
+// ============= 启动 =============
+build_25d();
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+
+  // TSV 微微发光脉冲
+  if (layers.tsvs) {
+    const pulse = 0.85 + 0.15 * Math.sin(Date.now() * 0.002);
+    materials.tsv.emissive = new THREE.Color(0x8b5cf6);
+    materials.tsv.emissiveIntensity = pulse * 0.15;
+  }
+
+  renderer.render(scene, camera);
+}
+animate();
+
+</script>
+</body>
+</html>
