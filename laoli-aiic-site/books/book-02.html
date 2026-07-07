@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOOK 02 · 先进封装设计实战 — 芯片专家老李Ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+.book-detail-hero{background:linear-gradient(135deg,#042f2e,#0a1628,#042f2e)}
+.book-detail-hero::before{background:radial-gradient(ellipse 600px 400px at 20% 30%,rgba(6,182,212,.08) 0%,transparent 70%)}
+.chapter-highlight{background:var(--card-bg);border:1px solid var(--slate-200);border-radius:var(--radius);padding:28px 32px;margin-bottom:36px}
+.chapter-highlight h3{font-size:1rem;font-weight:600;color:var(--slate-900);margin-bottom:12px}
+.chapter-highlight ul{list-style:none;padding:0}
+.chapter-highlight li{padding:6px 0;border-bottom:1px solid var(--slate-100);font-size:.85rem;color:var(--slate-600);display:flex;gap:8px}
+.chapter-highlight li:last-child{border-bottom:none}
+.chapter-highlight li .ch-num{color:var(--teal);font-weight:500;min-width:3em}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><a href="/" style="color:#fff;">芯片专家<span>老李Ai</span></a></div>
+  <button class="hamburger" aria-label="菜单">☰</button>
+  <ul class="nav-links">
+    <li><a href="/#home">首页</a></li>
+    <li><a href="/#books" class="active">丛书</a></li>
+    <li><a href="/#tools">工具</a></li>
+    <li><a href="/#knowledge">知识</a></li>
+    <li><a href="/#about">关于</a></li>
+    <li><a href="/#contact">联系</a></li>
+  </ul>
+</nav>
+
+<div class="book-detail-hero">
+  <div class="inner">
+    <div class="bd-num" style="background:#06b6d4;">2</div>
+    <div>
+      <h1>先进封装设计实战</h1>
+      <div class="bd-sub">基于 Cadence 的 2.5D / 3D IC 设计全流程</div>
+      <div class="bd-meta">
+        <span>🎯 封装设计方法论</span>
+        <span>📄 25 章 + 3 附录</span>
+        <span>✍️ 芯片专家老李Ai</span>
+        <span>📅 2026 年 6 月</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bd-content">
+  <div class="bd-intro">
+    <p>以 Cadence 工具链为主线，覆盖 2.5D 和 3D 先进封装设计的完整流程。从需求分析开始，到芯片来了怎么评估封装方案、怎么规划叠层和球图、怎么做 2.5D 中介层和 3D 堆叠设计、如何做信号/电源/热耦合仿真，最后到 DRC 检查、GDS 输出和良率考量。每章都围绕一个实际设计环节展开，做到"能照着做"。</p>
+    <div class="audience-box">
+      <strong>适合谁读？</strong> 刚入行 1-3 年的封装设计工程师；从 PCB 设计转向封装设计的工程师；芯片设计团队中负责封装协同的后端工程师；高校微电子专业的学生。
+    </div>
+  </div>
+
+  <h2>内容特色</h2>
+  <div class="bd-features">
+    <div class="bd-feature">
+      <h4>完整的 Cadence 工具链</h4>
+      <p>从 APD、Integrity 3D-IC 到 PVS、Sigrity、Celsius，全流程覆盖</p>
+    </div>
+    <div class="bd-feature">
+      <h4>三大封装类型实战</h4>
+      <p>2.5D 中介层、3D 堆叠、Chiplet 架构，每种都有完整设计案例</p>
+    </div>
+    <div class="bd-feature">
+      <h4>多物理场仿真</h4>
+      <p>信号完整性、电源完整性、热—应力耦合仿真，覆盖设计验证全环节</p>
+    </div>
+    <div class="bd-feature">
+      <h4>工程实操数据</h4>
+      <p>配套 BGA 球图、叠层文件、DRC 规则、仿真边界条件等练习数据</p>
+    </div>
+    <div class="bd-feature">
+      <h4>生产输出全流程</h4>
+      <p>从设计检查清单到 DRC 验证、GDS 输出、良率考量，确保可制造性</p>
+    </div>
+    <div class="bd-feature">
+      <h4>交互可视化工具</h4>
+      <p>配套 3D 封装结构可视化页面，立体直观理解 TSV、RDL、微凸块</p>
+    </div>
+  </div>
+
+  <h2>目录结构</h2>
+
+  <h3>第一部分 · 基础篇</h3>
+  <div class="chapter-highlight">
+    <ul>
+      <li><span class="ch-num">第1章</span>先进封装技术概览</li>
+      <li><span class="ch-num">第2章</span>Cadence 先进封装设计平台</li>
+      <li><span class="ch-num">第3章</span>设计前的准备工作</li>
+    </ul>
+  </div>
+
+  <h3>第二部分 · 需求分析与设计规划</h3>
+  <div class="chapter-highlight">
+    <ul>
+      <li><span class="ch-num">第4章</span>封装需求分析：从芯片规格到封装选型</li>
+      <li><span class="ch-num">第5章</span>叠层设计与材料选择</li>
+      <li><span class="ch-num">第6章</span>BGA 球图规划与扇出策略</li>
+      <li><span class="ch-num">第7章</span>多芯片布局与分区规划</li>
+    </ul>
+  </div>
+
+  <h3>第三部分 · 2.5D 封装设计实战</h3>
+  <div class="chapter-highlight">
+    <ul>
+      <li><span class="ch-num">第8章</span>中介层设计与 RDL 走线</li>
+      <li><span class="ch-num">第9章</span>微凸块与 TSV 设计</li>
+      <li><span class="ch-num">第10章</span>2.5D 封装完整设计流程</li>
+    </ul>
+  </div>
+
+  <h3>第四部分 · 3D 封装与 Chiplet 设计</h3>
+  <div class="chapter-highlight">
+    <ul>
+      <li><span class="ch-num">第11章</span>3D 堆叠结构设计</li>
+      <li><span class="ch-num">第12章</span>Chiplet 架构下的封装协同设计</li>
+      <li><span class="ch-num">第13章</span>多物理场仿真在 3D 封装中的应用</li>
+    </ul>
+  </div>
+
+  <h3>第五部分 · 仿真与验证</h3>
+  <div class="chapter-highlight">
+    <ul>
+      <li><span class="ch-num">第14章</span>信号完整性仿真</li>
+      <li><span class="ch-num">第15章</span>电源完整性仿真</li>
+      <li><span class="ch-num">第16章</span>热—应力耦合仿真</li>
+    </ul>
+  </div>
+
+  <h3>第六部分 · 项目管理与输出</h3>
+  <div class="chapter-highlight">
+    <ul>
+      <li><span class="ch-num">第17章</span>设计检查清单与 DRC 验证</li>
+      <li><span class="ch-num">第18章</span>生产文件输出与良率考量</li>
+      <li><span class="ch-num">第19章</span>实际项目案例复盘</li>
+      <li><span class="ch-num">附录</span>常用快捷键与工具配置参考 · Cadence 17.4 安装配置</li>
+    </ul>
+  </div>
+
+  <div class="bd-cta">
+    <h3>对这本书感兴趣？</h3>
+    <p>欢迎联系我们咨询或购买</p>
+    <a href="/#contact" class="btn-primary">📩 联系作者</a>
+    <a href="/tools/3d-packaging.html" class="btn-outline" style="border:1px solid var(--slate-300);color:var(--slate-700);margin-left:10px;">🧊 配套 3D 可视化</a>
+  </div>
+</div>
+
+<footer>
+  芯片专家老李Ai 系列丛书 · &copy; 2026
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

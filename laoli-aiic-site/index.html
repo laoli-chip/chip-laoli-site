@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>芯片专家老李Ai · 个人知识站</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- 导航 -->
+<nav>
+  <div class="logo">芯片专家<span>老李Ai</span></div>
+  <button class="hamburger" aria-label="菜单">☰</button>
+  <ul class="nav-links">
+    <li><a href="#home" class="active">首页</a></li>
+    <li><a href="#books">丛书</a></li>
+    <li><a href="#tools">工具</a></li>
+    <li><a href="#knowledge">知识</a></li>
+    <li><a href="#about">关于</a></li>
+    <li><a href="#social">关注</a></li>
+    <li><a href="#contact">联系</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section id="home" class="hero scroll-pad">
+  <div class="hero-content">
+    <h1>二十年封装实战，凝练成<span>系列丛书</span></h1>
+    <p>从芯片设计到系统集成，覆盖半导体全生命周期的工程实践知识库。<br>芯片专家老李Ai —— 用工程师的语言，讲工程师的故事。</p>
+    <div class="hero-cta">
+      <a href="#books" class="btn-primary">📚 浏览系列丛书</a>
+      <a href="/tools/3d-packaging.html" class="btn-hero-3d"><span class="icon-3d">🧊</span> 3D 封装可视化 →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num"><span>5</span></div><div class="label">本系列丛书</div></div>
+      <div class="hero-stat"><div class="num"><span>110</span>+</div><div class="label">章实战内容</div></div>
+      <div class="hero-stat"><div class="num"><span>20</span></div><div class="label">年行业积淀</div></div>
+      <div class="hero-stat"><div class="num"><span>5</span></div><div class="label">个完整案例</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 丛书 -->
+<section id="books" class="section section-center scroll-pad fade-in">
+  <h2 class="section-title">系列丛书</h2>
+  <p class="section-desc">从通识入门到系统集成，五本书覆盖芯片全生命周期工程知识体系</p>
+
+  <div class="path-box">
+    <div class="path-grid">
+      <div class="path-card" style="border-left:3px solid #3b82f6;">
+        <div class="tag" style="color:#3b82f6;">📖 通识入门</div>
+        <div class="name">半导体实战</div>
+        <div class="num">BOOK 01</div>
+      </div>
+      <div class="path-card" style="border-left:3px solid #06b6d4;">
+        <div class="tag" style="color:#06b6d4;">🎯 设计方法</div>
+        <div class="name">先进封装设计实战</div>
+        <div class="num">BOOK 02</div>
+      </div>
+      <div class="path-card" style="border-left:3px solid #8b5cf6;">
+        <div class="tag" style="color:#8b5cf6;">🔧 工具实战</div>
+        <div class="name">EDA 封装验证</div>
+        <div class="num">BOOK 03</div>
+      </div>
+      <div class="path-card" style="border-left:3px solid #0d9488;">
+        <div class="tag" style="color:#0d9488;">⚡ 系统集成 A</div>
+        <div class="name">MCM 多芯片</div>
+        <div class="num">BOOK 04</div>
+      </div>
+      <div class="path-card" style="border-left:3px solid #dc2626;">
+        <div class="tag" style="color:#dc2626;">⚡ 系统集成 B</div>
+        <div class="name">SiP 系统级</div>
+        <div class="num">BOOK 05</div>
+      </div>
+    </div>
+    <div class="path-flow">
+      <span style="background:rgba(59,130,246,.08);color:#3b82f6;">01 → 02 → 03</span>
+      <span class="sep">|</span>
+      <span style="color:var(--slate-500);font-size:.78rem;">系统集成</span>
+      <span style="background:rgba(13,148,136,.08);color:#0d9488;">04 MCM</span>
+      <span style="background:rgba(220,38,38,.08);color:#dc2626;">05 SiP</span>
+      <span class="note">（根据需求选方向）</span>
+    </div>
+  </div>
+
+  <div class="books-grid">
+    <!-- BOOK 01 -->
+    <div class="bcard fade-in" onclick="location.href='/books/book-01.html'">
+      <div class="bcard-top">
+        <div class="bnum bnum-1">1</div>
+        <div>
+          <h3>半导体实战：从设计到应用全流程指南</h3>
+          <div class="bsub" style="color:#3b82f6;">📖 芯片全生命周期通识 · 18章+4附录</div>
+          <div class="btags">
+            <span class="btag btag-blue">产业链</span>
+            <span class="btag btag-blue">架构设计</span>
+            <span class="btag btag-blue">封测</span>
+            <span class="btag btag-blue">可靠性</span>
+          </div>
+          <div class="bdesc">从架构定义到客户应用，打通产业链上下游知识盲区。刚入行或想建立全产业链视野的工程师的必备全景地图。</div>
+          <div class="baction">
+            <span class="btn-detail">查看详情 →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK 02 -->
+    <div class="bcard fade-in" onclick="location.href='/books/book-02.html'">
+      <div class="bcard-top">
+        <div class="bnum bnum-2">2</div>
+        <div>
+          <h3>先进封装设计实战：基于 Cadence 的 2.5D / 3D IC 设计全流程</h3>
+          <div class="bsub" style="color:#06b6d4;">🎯 封装设计方法论 · 25章+3附录</div>
+          <div class="btags">
+            <span class="btag btag-teal">2.5D/3D</span>
+            <span class="btag btag-teal">Chiplet</span>
+            <span class="btag btag-teal">Cadence</span>
+            <span class="btag btag-teal">SI/PI</span>
+          </div>
+          <div class="bdesc">以 Cadence 工具链为主线，从需求分析到生产输出，覆盖 2.5D 中介层、3D 堆叠、Chiplet 架构的完整设计流程。</div>
+          <div class="baction">
+            <span class="btn-detail">查看详情 →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK 03 -->
+    <div class="bcard fade-in" onclick="location.href='/books/book-03.html'">
+      <div class="bcard-top">
+        <div class="bnum bnum-3">3</div>
+        <div>
+          <h3>EDA 封装验证实战 — Cadence 版</h3>
+          <div class="bsub" style="color:#8b5cf6;">🔧 工具链深度实操 · 29章+7附录</div>
+          <div class="btags">
+            <span class="btag btag-violet">APD</span>
+            <span class="btag btag-violet">PVS</span>
+            <span class="btag btag-violet">DRC/LVS</span>
+            <span class="btag btag-violet">Sigrity</span>
+          </div>
+          <div class="bdesc">APD + Integrity 3D-IC + PVS 全流程验证。从 DRC/LVS 到 SI/PI 仿真，从 DFT 到 DFM，覆盖封装验证每个环节。</div>
+          <div class="baction">
+            <span class="btn-detail">查看详情 →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK 04 -->
+    <div class="bcard fade-in" onclick="location.href='/books/book-04.html'">
+      <div class="bcard-top">
+        <div class="bnum bnum-4">4</div>
+        <div>
+          <h3>MCM 多芯片封装设计实战</h3>
+          <div class="bsub" style="color:#0d9488;">⚡ 系统集成 — 多芯片模块 · 20章+4附录</div>
+          <div class="btags">
+            <span class="btag btag-emerald">MCM</span>
+            <span class="btag btag-emerald">多芯片</span>
+            <span class="btag btag-emerald">基板</span>
+            <span class="btag btag-emerald">热管理</span>
+          </div>
+          <div class="bdesc">多芯片模块（MCM）设计的完整指南。基板设计、芯片布局、互连规划、热管理、测试策略，以及 MCM 向 2.5D/3D 的演进路径。</div>
+          <div class="baction">
+            <span class="btn-detail">查看详情 →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK 05 -->
+    <div class="bcard fade-in" onclick="location.href='/books/book-05.html'">
+      <div class="bcard-top">
+        <div class="bnum bnum-5">5</div>
+        <div>
+          <h3>SiP 系统级封装设计实战</h3>
+          <div class="bsub" style="color:#dc2626;">⚡ 系统集成 — SiP 设计与应用 · 22章+5附录</div>
+          <div class="btags">
+            <span class="btag btag-rose">SiP</span>
+            <span class="btag btag-rose">系统级</span>
+            <span class="btag btag-rose">异质集成</span>
+            <span class="btag btag-rose">SiP/SOC</span>
+          </div>
+          <div class="bdesc">系统级封装（SiP）从需求到量产的完整指南。异质集成架构设计、多工艺协同、信号/电源完整性、可靠性验证与量产导入。</div>
+          <div class="baction">
+            <span class="btn-detail">查看详情 →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 交互工具 -->
+<section id="tools" class="section section-center section-alt scroll-pad fade-in">
+  <h2 class="section-title">交互工具</h2>
+  <p class="section-desc">用直观的交互体验理解复杂的封装结构，辅助阅读和技术交流</p>
+  <div class="k-grid" style="max-width:600px;margin:0 auto;">
+    <a href="/tools/3d-packaging.html" class="kcard" style="text-align:center;padding:40px 24px;">
+      <div style="font-size:3rem;margin-bottom:16px;">🧊</div>
+      <h4>3D 封装结构可视化</h4>
+      <p>在浏览器中交互查看 2.5D 中介层、3D 堆叠、Chiplet 等封装结构的立体模型。支持旋转、缩放、层切换和剖面模式。</p>
+    </a>
+  </div>
+</section>
+
+<!-- 知识库 -->
+<section id="knowledge" class="section section-center scroll-pad fade-in">
+  <h2 class="section-title">知识库</h2>
+  <p class="section-desc">技术文章、行业干货、实操视频</p>
+  <div class="k-grid">
+    <a href="#" class="kcard">
+      <span class="ktag kt-blue">技术文章</span>
+      <h4>先进封装技术概览：从传统封装到 3D IC</h4>
+      <p>一文理清封装技术演进路线：引线框架 → BGA → FC-BGA → 2.5D → 3D → Chiplet</p>
+      <div class="kfoot"><span>2026-05-15</span><div class="plat"><span>公众号</span></div></div>
+    </a>
+    <a href="#" class="kcard">
+      <span class="ktag kt-teal">EDA 操作</span>
+      <h4>Cadence APD 叠层设计实操：从 Dielectric 到 Stackup</h4>
+      <p>手把手教你配置叠层结构、设置材料参数、管理约束规则</p>
+      <div class="kfoot"><span>2026-05-01</span><div class="plat"><span>B站</span></div></div>
+    </a>
+    <a href="#" class="kcard">
+      <span class="ktag kt-violet">案例复盘</span>
+      <h4>AI 芯片 2.5D 封装案例：从需求到量产</h4>
+      <p>完整复盘某 AI 芯片的 2.5D 封装设计全过程，含关键决策点分析</p>
+      <div class="kfoot"><span>2026-04-20</span><div class="plat"><span>公众号</span></div></div>
+    </a>
+    <a href="#" class="kcard">
+      <span class="ktag kt-amber">芯片标准</span>
+      <h4>整车工规芯片使用标准 v1.0</h4>
+      <p>车规芯片的选型、验证、可靠性要求、质量管控框架和检查清单</p>
+      <div class="kfoot"><span>2026-06-13</span><div class="plat"><span>公众号</span></div></div>
+    </a>
+    <a href="#" class="kcard">
+      <span class="ktag kt-emerald">设计检查</span>
+      <h4>封装设计检查清单：DRC 前必查 50 项</h4>
+      <p>封装设计工程师在 tape-out 前应逐项确认的检查清单，减少 tape-out 风险</p>
+      <div class="kfoot"><span>2026-06-01</span><div class="plat"><span>公众号</span></div></div>
+    </a>
+    <a href="#" class="kcard">
+      <span class="ktag kt-rose">仿真</span>
+      <h4>Sigrity PI 仿真实战：电源完整性分析流程</h4>
+      <p>从 DC IR Drop 到 AC PDN 阻抗的全流程分析，含去耦电容优化策略</p>
+      <div class="kfoot"><span>2026-05-20</span><div class="plat"><span>B站</span></div></div>
+    </a>
+  </div>
+</section>
+
+<!-- 关于作者 -->
+<section id="about" class="section section-center section-alt scroll-pad fade-in">
+  <h2 class="section-title">关于作者</h2>
+  <p class="section-desc">二十年封装实战，从工程师到布道者</p>
+  <div style="max-width:700px;margin:0 auto;text-align:left;">
+    <div style="background:var(--card-bg);border:1px solid var(--slate-200);border-radius:var(--radius);padding:32px;">
+      <p style="font-size:.9rem;color:var(--slate-600);line-height:1.8;margin-bottom:16px;">
+        在芯片封装设计行业摸爬滚打二十年。从最传统的引线框架封装做起，经历了 BGA、FC-BGA、2.5D、3D 封装一路的演进。
+      </p>
+      <p style="font-size:.9rem;color:var(--slate-600);line-height:1.8;margin-bottom:16px;">
+        二十年最深的感受是：封装不再是芯片产业链的"后端工序"，而是决定芯片性能的关键环节。特别是随着 Chiplet 架构的普及和 AI 芯片对带宽的极致追求，先进封装成了半导体行业最炙手可热的领域之一。
+      </p>
+      <p style="font-size:.9rem;color:var(--slate-600);line-height:1.8;margin-bottom:16px;">
+        然而市面上的参考资料要么是厂商的官方文档（信息分散、缺乏系统性），要么是学术论文（离工程实践太远）。真正从设计工程师视角出发、以主流 EDA 工具为主线的系统教程，几乎空白。
+      </p>
+      <p style="font-size:.9rem;color:var(--slate-600);line-height:1.8;font-style:italic;">
+        "这五本书不是'写出来的'，是二十年踩坑踩出来的。"
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 关注 -->
+<section id="social" class="social-section section-center scroll-pad">
+  <div class="section">
+    <h2 class="section-title">关注我</h2>
+    <p class="section-desc">多平台同步更新，随时随地获取芯片行业实战干货</p>
+    <div class="s-grid">
+      <div class="scard">
+        <div class="sicon si-wx">💬</div>
+        <h4>微信公众号</h4>
+        <p>首发深度技术文章，每周更新<br>行业趋势 + 实战案例 + 答疑互动</p>
+        <div class="sid">芯片专家老李Ai</div>
+        <div class="qrcode"><img src="/images/wechat-qrcode.jpg" alt="微信公众号二维码" style="width:100%;height:100%;object-fit:cover;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 联系 -->
+<section id="contact" class="section scroll-pad fade-in">
+  <h2 class="section-title">联系我</h2>
+  <p class="section-desc">技术交流 · 书籍咨询 · 企业培训 · 项目合作</p>
+  <div class="contact-wrap">
+    <div class="contact-info">
+      <h3>联系方式</h3>
+      <p>无论是技术问题探讨、书籍购买咨询，还是企业内训与项目合作，都欢迎联系。</p>
+      <div class="citem">💬 微信公众号：芯片专家老李Ai</div>
+      <div class="citem">✉️ 邮箱：laoli@laoli-aiic.com</div>
+      <div class="citem">📞 商务合作：请通过公众号留言或发送邮件</div>
+      <div style="margin-top:20px;padding:18px 22px;background:var(--slate-50);border-radius:var(--radius-sm);">
+        <strong>企业培训服务：</strong><br>
+        提供 EDA 封装验证、先进封装设计、芯片可靠性工程等主题的企业内训课程。
+      </div>
+    </div>
+    <div class="contact-info">
+      <h3>给我留言</h3>
+      <p>发送邮件至 laoli@laoli-aiic.com，或通过微信公众号留言。</p>
+      <div class="citem">📚 丛书购买咨询 — 请通过公众号或邮箱联系</div>
+      <div class="citem">🎓 企业内训 — 按需定制，线上线下均可</div>
+      <div class="citem">🤝 项目合作 — 封装设计咨询、方案评估、技术评审</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  芯片专家老李Ai 系列丛书 · &copy; 2026
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
