@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOOK 03 · EDA 封装验证实战 (Cadence版) — 芯片专家老李Ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+.book-detail-hero{background:linear-gradient(135deg,#2e1065,#0a1628,#2e1065)}
+.book-detail-hero::before{background:radial-gradient(ellipse 600px 400px at 20% 30%,rgba(139,92,246,.08) 0%,transparent 70%)}
+.chapter-highlight{background:var(--card-bg);border:1px solid var(--slate-200);border-radius:var(--radius);padding:28px 32px;margin-bottom:36px}
+.chapter-highlight h3{font-size:1rem;font-weight:600;color:var(--slate-900);margin-bottom:12px}
+.chapter-highlight ul{list-style:none;padding:0}
+.chapter-highlight li{padding:6px 0;border-bottom:1px solid var(--slate-100);font-size:.85rem;color:var(--slate-600);display:flex;gap:8px}
+.chapter-highlight li:last-child{border-bottom:none}
+.chapter-highlight li .ch-num{color:#8b5cf6;font-weight:500;min-width:3em}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><a href="/" style="color:#fff;">芯片专家<span>老李Ai</span></a></div>
+  <button class="hamburger" aria-label="菜单">☰</button>
+  <ul class="nav-links">
+    <li><a href="/#home">首页</a></li>
+    <li><a href="/#books" class="active">丛书</a></li>
+    <li><a href="/#tools">工具</a></li>
+    <li><a href="/#knowledge">知识</a></li>
+    <li><a href="/#about">关于</a></li>
+    <li><a href="/#contact">联系</a></li>
+  </ul>
+</nav>
+
+<div class="book-detail-hero">
+  <div class="inner">
+    <div class="bd-num" style="background:#8b5cf6;">3</div>
+    <div>
+      <h1>EDA 封装验证实战 — Cadence 版</h1>
+      <div class="bd-sub">APD + Integrity 3D-IC + PVS 全流程验证</div>
+      <div class="bd-meta">
+        <span>🔧 工具链深度实操</span>
+        <span>📄 29 章 + 7 附录</span>
+        <span>✍️ 芯片专家老李Ai</span>
+        <span>📅 2026 年</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bd-content">
+  <div class="bd-intro">
+    <p>从 DRC/LVS 到 SI/PI 仿真，从 DFT 到 DFM，覆盖封装验证每个环节。以 Cadence 工具链（APD、Integrity 3D-IC、PVS、Quantus、Sigrity、Celsius）为平台，结合四个完整设计案例（Phoenix 2.5D GPU+HBM、Atlas 3D Stack HBM+Logic、Nexus 多 Chiplet、Helix 异质集成 MEMS+ASIC），手把手带你走通验证全流程。</p>
+    <div class="audience-box">
+      <strong>适合谁读？</strong> 已具备封装设计基础，希望系统掌握验证环节的工程师；从 Siemens 工具链转向 Cadence 工具链的用户；负责封装 sign-off 的质量工程师。
+    </div>
+  </div>
+
+  <h2>内容特色</h2>
+  <div class="bd-features">
+    <div class="bd-feature"><h4>双工具链对照</h4><p>DRC/LVS/Signoff 在 PVS 上的完整操作，配合 Siemens 版学习效果更佳</p></div>
+    <div class="bd-feature"><h4>四个实战案例</h4><p>2.5D GPU+HBM、3D Stack、多 Chiplet、异质集成，覆盖主流场景</p></div>
+    <div class="bd-feature"><h4>全验证类型</h4><p>DRC、LVS、LPE、Signoff、SI/PI、热仿真、DFT、DFM 一个不少</p></div>
+    <div class="bd-feature"><h4>脚本自动化</h4><p>Skill、Tcl 脚本辅助验证流程自动化，提升工作效率</p></div>
+    <div class="bd-feature"><h4>避坑指南</h4><p>十大常见验证错误及排查方法，来自作者二十年实战经验</p></div>
+    <div class="bd-feature"><h4>配套数据</h4><p>四个案例的完整设计数据、DRC 规则文件、仿真设置文件</p></div>
+  </div>
+
+  <h2>目录</h2>
+
+  <table class="toc-table">
+    <thead><tr><th>模块</th><th>章节</th><th>核心内容</th></tr></thead>
+    <tbody>
+      <tr><td class="mod-name">验证总论</td><td class="mod-ch">第1-3章</td><td>验证体系总览、验证计划制定、Cadence 验证工具链</td></tr>
+      <tr><td class="mod-name">PVS DRC 篇</td><td class="mod-ch">第4-6章</td><td>DRC 基础、规则编写、DRC 实战案例</td></tr>
+      <tr><td class="mod-name">PVS LVS 篇</td><td class="mod-ch">第7-9章</td><td>LVS 基础、3D Stack LVS、LVS 实战案例</td></tr>
+      <tr><td class="mod-name">Quantus LPE</td><td class="mod-ch">第10章</td><td>寄生参数提取与后仿网表生成</td></tr>
+      <tr><td class="mod-name">Sigrity SI/PI</td><td class="mod-ch">第11-12章</td><td>信号完整性仿真、电源完整性仿真</td></tr>
+      <tr><td class="mod-name">Celsius 热仿真</td><td class="mod-ch">第13章</td><td>稳态/瞬态热仿真、热-应力耦合</td></tr>
+      <tr><td class="mod-name">Modus DFT</td><td class="mod-ch">第14章</td><td>可测性设计分析、测试覆盖率优化</td></tr>
+      <tr><td class="mod-name">DFM 与良率</td><td class="mod-ch">第15章</td><td>可制造性设计、良率分析</td></tr>
+      <tr><td class="mod-name">协同与集成</td><td class="mod-ch">第16-18章</td><td>数据协同、脚本自动化、验证报告</td></tr>
+      <tr><td class="mod-name">四大案例实战</td><td class="mod-ch">第19-22章</td><td>Phoenix、Atlas、Nexus、Helix 完整验证</td></tr>
+      <tr><td class="mod-name">经验与参数</td><td class="mod-ch">第23-25章</td><td>十大避坑、参数汇总、脚本库</td></tr>
+      <tr><td class="mod-name">附录 A-G</td><td class="mod-ch"></td><td>命令速查、Layer Map、术语表、Calibre 对比等</td></tr>
+    </tbody>
+  </table>
+
+  <div class="bd-cta">
+    <h3>对这本书感兴趣？</h3>
+    <p>电子版定价 99 元，联系我们获取更多信息或购买</p>
+    <a href="/#contact" class="btn-primary">📩 联系作者</a>
+  </div>
+</div>
+
+<footer>
+  芯片专家老李Ai 系列丛书 · &copy; 2026
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
