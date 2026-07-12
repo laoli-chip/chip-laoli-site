@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>六本书封面图生成器</title>
+<style>
+body { font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif; background: #f0f4f8; margin: 0; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+h1 { font-size: 1.5rem; color: #0a1628; margin-bottom: 8px; }
+.desc { color: #64748b; font-size: 0.9rem; margin-bottom: 32px; }
+.controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+.controls button {
+  padding: 10px 24px; border: none; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600; color: #fff; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+}
+.controls button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 960px; }
+.card {
+  background: #fff; border-radius: 12px; padding: 16px; text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.card canvas { width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; }
+.card .name { font-size: 0.85rem; font-weight: 600; color: #1e293b; margin: 10px 0 4px; }
+.card .download-btn {
+  display: inline-block; padding: 6px 16px; border-radius: 6px;
+  background: #3b82f6; color: #fff; font-size: 0.78rem; text-decoration: none;
+  font-weight: 500; transition: all 0.2s;
+}
+.card .download-btn:hover { background: #2563eb; }
+</style>
+</head>
+<body>
+<h1>📘 六本书商品封面图生成器</h1>
+<p class="desc">点击按钮生成所有书籍封面，右键保存或点击下载按钮</p>
+
+<div class="controls">
+  <button onclick="generateAll()" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">🎨 生成全部封面</button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<script>
+const books = [
+  { id: 1, title: '半导体实战', sub: '从设计到应用全流程指南', tag: '芯片全生命周期通识', color: '#3b82f6', dark: '#1d4ed8', num: '01' },
+  { id: 2, title: '先进封装设计实战', sub: '基于Cadence 2.5D/3D IC全流程', tag: '封装设计方法论', color: '#06b6d4', dark: '#0891b2', num: '02' },
+  { id: 3, title: 'EDA封装验证实战', sub: 'Innovator3D IC + Calibre', tag: '双工具链通用验证平台', color: '#8b5cf6', dark: '#7c3aed', num: '03' },
+  { id: 4, title: 'MCM多芯片封装', sub: '设计与仿真操作手册', tag: '多芯片封装设计仿真', color: '#0d9488', dark: '#0f766e', num: '04' },
+  { id: 5, title: 'SiP系统级封装', sub: '设计仿真操作手册', tag: '系统级封装完整方法', color: '#dc2626', dark: '#b91c1c', num: '05' },
+  { id: 6, title: 'MCM封装工艺流程', sub: '控制计划与PFMEA', tag: '封装制造质量方法论', color: '#0d9488', dark: '#065f46', num: '06' },
+];
+
+function drawCover(book) {
+  const c = document.createElement('canvas');
+  c.width = 800;
+  c.height = 800;
+  const ctx = c.getContext('2d');
+
+  // Background gradient
+  const grad = ctx.createLinearGradient(0, 0, 800, 800);
+  grad.addColorStop(0, book.color);
+  grad.addColorStop(1, book.dark);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 800, 800);
+
+  // Decorative circles
+  ctx.globalAlpha = 0.06;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(680, 120, 200, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(100, 700, 160, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(400, 400, 300, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Grid pattern
+  ctx.globalAlpha = 0.04;
+  for (let i = 0; i < 800; i += 40) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 800); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(800, i); ctx.stroke(); }
+  ctx.globalAlpha = 1;
+
+  // Book number circle
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.beginPath(); ctx.arc(96, 96, 50, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 28px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('BOOK', 96, 82);
+  ctx.font = 'bold 32px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText(book.num, 96, 118);
+
+  // Series line
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '14px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('芯片专家老李Ai 系列丛书', 400, 60);
+
+  // Title
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 52px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  wrapText(ctx, book.title, 400, 320, 600, 60);
+
+  // Subtitle
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = '24px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText(book.sub, 400, 440);
+
+  // Divider
+  ctx.beginPath();
+  ctx.moveTo(280, 470);
+  ctx.lineTo(520, 470);
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Tag badge
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  roundRect(ctx, 240, 490, 320, 42, 21);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '18px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText(book.tag, 400, 518);
+
+  // Author
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '16px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('芯片专家老李Ai', 400, 610);
+
+  // Bottom bar
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.fillRect(0, 750, 800, 50);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = '13px "Noto Sans SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('www.laoli-aiic.com', 400, 778);
+
+  // Chip icon decoration
+  ctx.globalAlpha = 0.08;
+  for (let i = 0; i < 12; i++) {
+    let x = 60 + i * 60;
+    let y = 710;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x-10, y-10, 20, 20);
+    ctx.beginPath(); ctx.moveTo(x, y-14); ctx.lineTo(x, y-10); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x, y+10); ctx.lineTo(x, y+14); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x-14, y); ctx.lineTo(x-10, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+10, y); ctx.lineTo(x+14, y); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  return c;
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const lines = text.split('\n');
+  if (lines.length > 1) {
+    lines.forEach((line, i) => {
+      ctx.fillText(line, x, y + i * lineHeight);
+    });
+  } else {
+    ctx.fillText(text, x, y);
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function generateAll() {
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = '';
+  books.forEach(book => {
+    const c = drawCover(book);
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.appendChild(c);
+    const name = document.createElement('div');
+    name.className = 'name';
+    name.textContent = `BOOK ${book.num} ${book.title}`;
+    card.appendChild(name);
+    const link = document.createElement('a');
+    link.className = 'download-btn';
+    link.href = c.toDataURL('image/png');
+    link.download = `book${book.num}_${book.title}.png`;
+    link.textContent = '📥 下载封面图';
+    card.appendChild(link);
+    gallery.appendChild(card);
+  });
+}
+
+// Auto generate on load
+window.onload = generateAll;
+</script>
+</body>
+</html>
