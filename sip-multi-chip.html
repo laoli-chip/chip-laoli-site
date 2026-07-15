@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiP 多芯片系统级封装设计仿真 — 芯片专家老李Ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+.page-hero{background:linear-gradient(135deg,#2d0a0a,#0a1628,#2d0a0a);padding:120px 32px 70px;text-align:center;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 500px at 20% 25%,rgba(220,38,38,.06) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 80% 55%,rgba(6,182,212,.04) 0%,transparent 70%)}
+.page-hero .inner{position:relative;z-index:1;max-width:800px;margin:0 auto}
+.page-hero h1{font-size:2.2rem;font-weight:800;color:#fff;line-height:1.2;margin-bottom:10px}
+.page-hero h1 span{background:linear-gradient(135deg,#f87171,var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent}
+.page-hero .sub{font-size:1rem;color:var(--slate-400);max-width:620px;margin:0 auto;line-height:1.7}
+.content-area{max-width:1000px;margin:0 auto;padding:48px 32px}
+.section-title{font-size:1.35rem;font-weight:700;color:var(--slate-900);margin-bottom:4px}
+.section-desc{font-size:.9rem;color:var(--slate-500);margin-bottom:28px;line-height:1.7}
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.info-card{background:#fff;border:1px solid var(--slate-200);border-radius:var(--radius);padding:22px;transition:all .2s}
+.info-card:hover{border-color:var(--slate-300)}
+.info-card h4{font-size:.9rem;font-weight:600;color:var(--slate-900);margin-bottom:6px}
+.info-card p{font-size:.8rem;color:var(--slate-500);line-height:1.6;margin:0}
+.flow-box{background:var(--slate-50);border:1px solid var(--slate-200);border-radius:var(--radius);padding:24px;text-align:center}
+.flow-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.flow-item{padding:8px 16px;border-radius:6px;font-size:.8rem;font-weight:500}
+.fb1{background:rgba(59,130,246,.08);color:var(--blue)}
+.fb2{background:rgba(13,148,136,.08);color:#0d9488}
+.fb3{background:rgba(139,92,246,.08);color:var(--violet)}
+.fb4{background:rgba(245,158,11,.08);color:#d97706}
+.flow-arrow{color:var(--slate-300);font-size:1rem}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.feat-card{padding:20px;border:1px solid var(--slate-200);border-radius:var(--radius-sm);background:#fff;text-align:center}
+.feat-card .icon{font-size:2rem;margin-bottom:10px}
+.feat-card h4{font-size:.85rem;font-weight:600;color:var(--slate-900);margin-bottom:4px}
+.feat-card p{font-size:.78rem;color:var(--slate-500);line-height:1.6;margin:0}
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--slate-200)}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{background:var(--navy);color:#fff;font-weight:600;padding:9px 12px;text-align:left;font-size:.76rem}
+td{padding:8px 12px;border-bottom:1px solid var(--slate-100);color:var(--slate-600)}
+tr:last-child td{border-bottom:none}tr:nth-child(even) td{background:var(--slate-50)}
+@media(max-width:768px){.card-grid,.feat-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo"><a href="/" style="color:#fff;">芯片专家<span>老李Ai</span></a></div>
+  <button class="hamburger" aria-label="菜单">☰</button>
+  <ul class="nav-links">
+    <li><a href="/#home">首页</a></li>
+    <li><a href="/#books">丛书</a></li>
+    <li><a href="/#tools" class="active">工具</a></li>
+    <li><a href="/#knowledge">知识</a></li>
+    <li><a href="/#about">关于</a></li>
+    <li><a href="/#social">关注</a></li>
+    <li><a href="/#contact">联系</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div class="inner">
+    <h1>SiP 多芯片 <span>系统级封装</span><br>设计仿真</h1>
+    <div class="sub">异构集成架构 · 基板与中介层 · 多物理场仿真 · DFM 量产</div>
+  </div>
+</div>
+
+<div class="content-area">
+  <h2 class="section-title">技术概述</h2>
+  <p class="section-desc">SiP（System-in-Package）通过将多颗不同工艺节点与功能类型的芯片集成到单一封装中，在成本、性能和集成度之间提供灵活的平衡方案。</p>
+
+  <div class="card-grid">
+    <div class="info-card">
+      <h4>📦 异构集成架构</h4>
+      <p>数字/模拟/RF/MEMS/功率等多功能芯片的异构集成方法。架构设计方法论涵盖功能分区、接口定义、热管理和电源规划。</p>
+    </div>
+    <div class="info-card">
+      <h4>🔲 基板与中介层设计</h4>
+      <p>基板叠层设计（层数/材料/阻抗）、中介层规划、TSV/RDL/微凸块工艺与设计规则、HDI/Any-Layer/SLP 高密度布线。</p>
+    </div>
+    <div class="info-card">
+      <h4>📊 多物理场仿真</h4>
+      <p>SI（信号完整性）/ PI（电源完整性）/ 热 / 应力 四大仿真的理论基础与工具实操。覆盖 DDR/SerDes/MIPI/HBM 高速接口。</p>
+    </div>
+    <div class="info-card">
+      <h4>✅ DFM 与量产交付</h4>
+      <p>DRC/LVS 验证、生产文件输出（Gerber/ODB++/GDS）、良率优化与量产导入注意事项。</p>
+    </div>
+  </div>
+</div>
+
+<div class="content-area" style="background:var(--slate-50);border-top:1px solid var(--slate-200);border-bottom:1px solid var(--slate-200);">
+  <h2 class="section-title">设计流程</h2>
+  <p class="section-desc">从系统架构定义到量产交付的完整 SiP 设计流程</p>
+
+  <div class="flow-box">
+    <div class="flow-row">
+      <span class="flow-item fb1">系统架构</span><span class="flow-arrow">→</span>
+      <span class="flow-item fb1">芯片选型</span><span class="flow-arrow">→</span>
+      <span class="flow-item fb2">基板/中介层</span><span class="flow-arrow">→</span>
+    </div>
+    <div class="flow-row">
+      <span class="flow-item fb2">布局布线</span><span class="flow-arrow">→</span>
+      <span class="flow-item fb3">SI/PI/热仿真</span><span class="flow-arrow">→</span>
+      <span class="flow-item fb4">DFM 输出</span>
+    </div>
+  </div>
+
+  <div class="feat-grid" style="margin-top:24px;">
+    <div class="feat-card"><div class="icon">📐</div><h4>架构与选型</h4><p>系统架构设计、芯片协同选型、BGA/基板策略</p></div>
+    <div class="feat-card"><div class="icon">🔲</div><h4>基板设计</h4><p>叠层设计、中介层/TSV/RDL、高密度布线</p></div>
+    <div class="feat-card"><div class="icon">📊</div><h4>多物理场</h4><p>SI/PI/热/应力耦合仿真全流程</p></div>
+    <div class="feat-card"><div class="icon">✅</div><h4>设计验证</h4><p>DRC/LVS/Signoff 检查清单</p></div>
+    <div class="feat-card"><div class="icon">📦</div><h4>生产输出</h4><p>Gerber/GDS/ODB++ 文件输出</p></div>
+    <div class="feat-card"><div class="icon">📈</div><h4>良率优化</h4><p>量产导入与良率提升</p></div>
+  </div>
+</div>
+
+<div class="content-area">
+  <h2 class="section-title">核心工具链</h2>
+  <p class="section-desc">覆盖 SiP 全流程的主流 EDA 工具</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>环节</th><th>Siemens EDA</th><th>Cadence</th><th>Ansys</th></tr></thead>
+      <tbody>
+        <tr><td><strong>系统规划</strong></td><td>Innovator3D IC</td><td>Integrity 3D-IC</td><td>-</td></tr>
+        <tr><td><strong>基板设计</strong></td><td>Xpedition Package</td><td>APD</td><td>-</td></tr>
+        <tr><td><strong>DRC/LVS</strong></td><td>Calibre 3DSTACK</td><td>PVS</td><td>-</td></tr>
+        <tr><td><strong>SI 仿真</strong></td><td>HyperLynx</td><td>Sigrity PowerSI</td><td>HFSS / SIwave</td></tr>
+        <tr><td><strong>PI 仿真</strong></td><td>HyperLynx PI</td><td>Sigrity PowerDC</td><td>SIwave / HFSS-PI</td></tr>
+        <tr><td><strong>热仿真</strong></td><td>Flotherm / 3DThermal</td><td>Celsius</td><td>Icepak</td></tr>
+        <tr><td><strong>应力仿真</strong></td><td>NX</td><td>Clarity</td><td>Mechanical</td></tr>
+        <tr><td><strong>电磁仿真</strong></td><td>NX</td><td>Clarity 3D Solver</td><td>HFSS / Q3D</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="content-area" style="background:var(--slate-50);border-top:1px solid var(--slate-200);border-bottom:1px solid var(--slate-200);text-align:center;">
+  <p style="font-size:.9rem;color:var(--slate-600);line-height:1.7;">
+    详细内容请参考丛书
+    <strong><a href="/books/book-05.html" style="color:var(--blue-light);">BOOK 05 SiP 系统级封装设计仿真操作手册</a></strong>
+    和
+    <strong><a href="/books/book-04.html" style="color:var(--blue-light);">BOOK 04 MCM 多芯片封装设计与仿真操作手册</a></strong>
+  </p>
+  <p style="font-size:.8rem;color:var(--slate-400);margin-top:8px;">
+    <a href="/" style="color:var(--slate-400);">← 返回首页</a>
+  </p>
+</div>
+
+<footer>芯片专家老李Ai · &copy; 2026</footer>
+<script src="/js/main.js"></script>
+</body>
+</html>
