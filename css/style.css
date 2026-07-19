@@ -246,6 +246,20 @@ footer{text-align:center;padding:32px 24px;font-size:.82rem;color:var(--slate-40
 .bd-cta h3{font-size:1.2rem;font-weight:700;color:var(--slate-900);margin-bottom:8px}
 .bd-cta p{font-size:.9rem;color:var(--slate-500);margin-bottom:20px}
 
+/* ===== 六大产品书架 ===== */
+.btn-buy-small:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(7,193,96,.25)}
+.books-showcase{max-width:960px;margin:0 auto}
+.book-shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.shelf-item{border-radius:var(--radius);padding:24px 16px;color:#fff;position:relative;overflow:hidden;transition:all .3s;cursor:default;min-height:170px;display:flex;flex-direction:column}
+.shelf-item:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(0,0,0,.15)}
+.shelf-item::after{content:'';position:absolute;top:-30px;right:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05)}
+.shelf-item::before{content:'';position:absolute;bottom:-20px;left:-20px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.04)}
+.shelf-num{font-size:.7rem;font-weight:700;opacity:.6;margin-bottom:6px}
+.shelf-title{font-size:1rem;font-weight:700;line-height:1.3;margin-bottom:4px}
+.shelf-sub{font-size:.72rem;opacity:.75;line-height:1.4;margin-bottom:12px;flex:1}
+.shelf-tag{font-size:.65rem;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.15);display:inline-block;align-self:flex-start}
+.shelf-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);position:absolute;top:16px;right:16px}
+
 /* ===== 3D 可视化工具页 ===== */
 .tool-page{height:100vh;display:flex;flex-direction:column;overflow:hidden;background:var(--navy);color:#fff}
 .tool-header{height:52px;display:flex;align-items:center;padding:0 20px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;gap:16px}
@@ -276,9 +290,14 @@ footer{text-align:center;padding:32px 24px;font-size:.82rem;color:var(--slate-40
   .book-detail-hero .bd-meta{justify-content:center}
   .contact-wrap{grid-template-columns:1fr}
   .books-grid{gap:16px}
+  .book-shelf{grid-template-columns:repeat(2,1fr)}
   .bcard{padding:20px}
   .toc-table{font-size:.8rem}
   .toc-table th,.toc-table td{padding:8px 10px}
+}
+
+@media(max-width:480px){
+  .book-shelf{grid-template-columns:1fr}
 }
 
 /* ===== 淡入动画 ===== */
