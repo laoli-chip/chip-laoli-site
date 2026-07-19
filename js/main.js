@@ -42,4 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { rootMargin: '-45% 0px -45% 0px' });
     sections.forEach(function(s) { navObserver.observe(s); });
   }
+
+  // 复制微信小程序口令
+  document.querySelectorAll('[data-copy]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var value = button.getAttribute('data-copy');
+      if (!value || !navigator.clipboard) return;
+      navigator.clipboard.writeText(value).then(function() {
+        var original = button.textContent;
+        button.textContent = '已复制，请到微信粘贴';
+        window.setTimeout(function() { button.textContent = original; }, 1800);
+      });
+    });
+  });
 });
