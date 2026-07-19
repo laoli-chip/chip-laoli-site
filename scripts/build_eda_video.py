@@ -18,7 +18,7 @@ PHOTO_MAP = {
     3: (ROOT / "images/video-generated/chiplet-bonding.png", "原创视觉 · 芯粒键合与互连", "crop"),
     4: (ROOT / "images/video-generated/chiplet-bonding.png", "原创视觉 · 微凸点与连通验证", "crop"),
     5: (ROOT / "images/video-generated/hbm-stacks.png", "原创视觉 · HBM 三维堆叠", "crop"),
-    6: (BUILD / "assets/macro-pcb.jpg", "Macro circuit board · Ingo Dierking · CC BY-SA 4.0", "crop"),
+    6: (ROOT / "images/video-generated/packaging-roadmap.png", "原创视觉 · 制造签核与交付", "crop"),
 }
 
 SLIDES = [
@@ -122,8 +122,14 @@ def main():
     for index, slide in enumerate(SLIDES):
         render_slide(index, slide).save(BUILD / f"slide-{index:02d}.png", quality=95)
 
-    audio = BUILD / "narration.aiff"
-    run(["say", "-v", "Tingting", "-r", "182", "-o", str(audio), NARRATION])
+    audio = BUILD / "narration.mp3"
+    edge_tts = BUILD / "voice-venv/bin/edge-tts"
+    if not edge_tts.exists():
+        raise RuntimeError("请先安装视频语音依赖：python3 -m venv .video-build/voice-venv && .video-build/voice-venv/bin/pip install -r requirements-video.txt")
+    run([
+        str(edge_tts), "--voice", "zh-CN-YunxiNeural", "--rate=-5%",
+        "--text", NARRATION, "--write-media", str(audio),
+    ])
     duration = float(subprocess.check_output([
         "ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1", str(audio)
     ]).decode().strip())
