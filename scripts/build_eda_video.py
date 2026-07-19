@@ -12,10 +12,13 @@ OUTPUT = ROOT / "videos" / "eda-book-intro.mp4"
 FONT = "/System/Library/Fonts/STHeiti Light.ttc"
 W, H = 1920, 1080
 PHOTO_MAP = {
-    1: ("silicon-wafers.jpg", "Silicon wafers · ArticCynda · CC0"),
-    3: ("wire-bonding.jpg", "IC wire bonding · Mister rf · CC BY-SA 4.0"),
-    4: ("wire-bonding.jpg", "IC wire bonding · Mister rf · CC BY-SA 4.0"),
-    6: ("macro-pcb.jpg", "Macro circuit board · Ingo Dierking · CC BY-SA 4.0"),
+    0: (ROOT / "images/video-generated/dual-gpu-package.png", "原创视觉 · 双 GPU 先进封装", "crop"),
+    1: (ROOT / "images/video-generated/application-ecosystem.png", "原创视觉 · 应用与制造路径", "crop"),
+    2: (ROOT / "images/video-generated/packaging-roadmap.png", "原创视觉 · 先进封装技术路线", "crop"),
+    3: (ROOT / "images/video-generated/chiplet-bonding.png", "原创视觉 · 芯粒键合与互连", "crop"),
+    4: (ROOT / "images/video-generated/chiplet-bonding.png", "原创视觉 · 微凸点与连通验证", "crop"),
+    5: (ROOT / "images/video-generated/hbm-stacks.png", "原创视觉 · HBM 三维堆叠", "crop"),
+    6: (BUILD / "assets/macro-pcb.jpg", "Macro circuit board · Ingo Dierking · CC BY-SA 4.0", "crop"),
 }
 
 SLIDES = [
@@ -63,14 +66,20 @@ def render_slide(index, data):
         draw.line((100, cy, 530, cy), fill=(38, 122, 246), width=4)
         draw.ellipse((514, cy - 11, 536, cy + 11), fill=(96, 165, 250))
     photo_info = PHOTO_MAP.get(index)
-    if photo_info and (BUILD / "assets" / photo_info[0]).exists():
-        source = Image.open(BUILD / "assets" / photo_info[0]).convert("RGB")
+    if photo_info and photo_info[0].exists():
+        source = Image.open(photo_info[0]).convert("RGB")
         target_w, target_h = 610, 680
-        scale = max(target_w / source.width, target_h / source.height)
-        source = source.resize((math.ceil(source.width * scale), math.ceil(source.height * scale)), Image.Resampling.LANCZOS)
-        left = (source.width - target_w) // 2
-        top = (source.height - target_h) // 2
-        source = source.crop((left, top, left + target_w, top + target_h))
+        if photo_info[2] == "contain":
+            scale = min(target_w / source.width, target_h / source.height)
+            resized = source.resize((math.ceil(source.width * scale), math.ceil(source.height * scale)), Image.Resampling.LANCZOS)
+            source = Image.new("RGB", (target_w, target_h), (3, 12, 24))
+            source.paste(resized, ((target_w - resized.width) // 2, (target_h - resized.height) // 2))
+        else:
+            scale = max(target_w / source.width, target_h / source.height)
+            source = source.resize((math.ceil(source.width * scale), math.ceil(source.height * scale)), Image.Resampling.LANCZOS)
+            left = (source.width - target_w) // 2
+            top = (source.height - target_h) // 2
+            source = source.crop((left, top, left + target_w, top + target_h))
         dark = Image.new("RGB", source.size, (4, 18, 35))
         source = Image.blend(source, dark, .30)
         mask = Image.new("L", source.size, 0)
@@ -123,7 +132,7 @@ def main():
 
     command = ["ffmpeg", "-y"]
     for index in range(len(SLIDES)):
-        command += ["-loop", "1", "-t", f"{slide_duration:.3f}", "-i", str(BUILD / f"slide-{index:02d}.png")]
+        command += ["-loop", "1", "-framerate", "30", "-t", f"{slide_duration:.3f}", "-i", str(BUILD / f"slide-{index:02d}.png")]
     command += ["-i", str(audio)]
 
     filters = []
