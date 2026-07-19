@@ -71,15 +71,15 @@ nav .nav-links a.active{color:#fff;background:rgba(255,255,255,.08)}
     radial-gradient(ellipse 300px 300px at 50% 80%,rgba(139,92,246,.05) 0%,transparent 70%);
 }
 .hero-philosophy,.hero-warrior{position:absolute;inset:0;pointer-events:none;user-select:none}
-.dao-mark{position:absolute;right:9%;top:2%;font-family:'Noto Serif SC',serif;font-size:clamp(8rem,18vw,16rem);font-weight:700;color:rgba(255,255,255,.025);line-height:1}
-.kungfu-mark{position:absolute;left:2%;bottom:-2%;font-family:'Noto Serif SC',serif;font-size:clamp(5rem,11vw,10rem);font-weight:800;letter-spacing:.06em;color:rgba(255,255,255,.022);line-height:1;writing-mode:vertical-rl}
-.dao-copy{position:absolute;right:6%;top:18%;display:flex;flex-direction:column;gap:8px;font-family:'Noto Serif SC',serif;font-size:.78rem;letter-spacing:.18em;color:rgba(255,255,255,.09)}
-.dao-line{position:absolute;right:6%;top:34%;writing-mode:vertical-rl;font-family:'Noto Serif SC',serif;font-size:.68rem;letter-spacing:.18em;color:rgba(255,255,255,.08)}
-.craft-words{position:absolute;right:18%;bottom:8%;display:flex;gap:18px;font-family:'Noto Serif SC',serif;font-size:.66rem;letter-spacing:.16em;color:rgba(255,255,255,.08)}
-.wisdom{position:absolute;top:21%;writing-mode:vertical-rl;font-family:'Noto Serif SC',serif;color:rgba(255,255,255,.12);font-size:.72rem;letter-spacing:.14em;line-height:1.8}
-.wisdom strong{font-weight:500;color:rgba(96,165,250,.2);margin-top:8px}
+.dao-mark{position:absolute;right:9%;top:2%;font-family:'Noto Serif SC',serif;font-size:clamp(8rem,18vw,16rem);font-weight:700;color:rgba(255,255,255,.055);line-height:1}
+.kungfu-mark{position:absolute;left:2%;bottom:-2%;font-family:'Noto Serif SC',serif;font-size:clamp(5rem,11vw,10rem);font-weight:800;letter-spacing:.06em;color:rgba(255,255,255,.05);line-height:1;writing-mode:vertical-rl}
+.dao-copy{position:absolute;right:6%;top:18%;display:flex;flex-direction:column;gap:8px;font-family:'Noto Serif SC',serif;font-size:.78rem;letter-spacing:.18em;color:rgba(255,255,255,.16)}
+.dao-line{position:absolute;right:6%;top:34%;writing-mode:vertical-rl;font-family:'Noto Serif SC',serif;font-size:.68rem;letter-spacing:.18em;color:rgba(255,255,255,.14)}
+.craft-words{position:absolute;right:18%;bottom:8%;display:flex;gap:18px;font-family:'Noto Serif SC',serif;font-size:.66rem;letter-spacing:.16em;color:rgba(255,255,255,.15)}
+.wisdom{position:absolute;top:21%;writing-mode:vertical-rl;font-family:'Noto Serif SC',serif;color:rgba(255,255,255,.24);font-size:.72rem;letter-spacing:.14em;line-height:1.8}
+.wisdom strong{font-weight:500;color:rgba(96,165,250,.35);margin-top:8px}
 .wisdom-left{left:4%}.wisdom-right{left:9%}
-.hero-warrior{inset:auto 4% -30px auto;width:220px;height:300px;opacity:.055}
+.hero-warrior{inset:auto 4% -30px auto;width:220px;height:300px;opacity:.1}
 .hero-warrior svg{display:block;width:100%;height:100%}
 .hero-content{position:relative;z-index:1;max-width:900px;margin:0 auto}
 .hero-eyebrow{display:inline-flex;align-items:center;padding:6px 13px;border:1px solid rgba(96,165,250,.24);border-radius:999px;background:rgba(59,130,246,.08);color:#93c5fd;font-size:.68rem;font-weight:700;letter-spacing:.16em;margin-bottom:20px}
